@@ -1,133 +1,136 @@
-# Project 3 - Starter Kit - Symfony 5.*
+# SUPPORT - SYMFONY : LES BASES
 
-![Wild Code School](https://wildcodeschool.fr/wp-content/uploads/2019/01/logo_pink_176x60.png)
+## OBJECTIFS
 
-This starter kit is here to easily start a repository for your students.
+* Apprivoiser l'arborescence d'un projet Symfony;
 
-It's symfony website-skeleton project with some additional tools to validate code standards.
+* Apprendre à se lancer dans le développement d'un projet Symfony;
 
-* GrumPHP, as pre-commit hook, will run 2 tools when `git commit` is run :
-  
-    * PHP_CodeSniffer to check PSR12 
-    * PHPStan focuses on finding errors in your code (without actually running it)
-    * PHPmd will check if you follow PHP best practices
-     
-  If tests fail, the commit is canceled and a warning message is displayed to developper.
+* Comprendre le fonctionnement du routing de Symfony avec la mise en place d'un contrôleur basique;
 
-* Github Action as Continuous Integration will be run when a branch with active pull request is updated on github. It will run :
+* Afficher des photos de chats, parce que les chats c'est trop meugnon 😽.
 
-    * Tasks to check if vendor, .idea, env.local are not versionned,
-    * PHP_CodeSniffer, PHPStan and PHPmd with same configuration as GrumPHP.
- 
+## INSTALLATION
 
-### Trainers instructions
+* Premièrement, clone ce repo, qui est basé sur le *starter kit* à partir duquel tu vas démarrer ton projet 3, qui a été préparé avec amour par ton/ta formateur·ice ❤️.
 
-1. Add your students team as contributor .
-2. Disallow both on 'dev' and 'master' branches your students writing credentials. 
-3. Disallow merge available while one approbation is not submitted on PR.
+* Ce repo, comme celui du Simple-MVC, contient un `composer.json` ainsi qu'un `composer.lock`, c'est donc qu'il y a potentiellement des dépendances PHP à installer : lance `composer install` pour télécharger toutes tes dépendances PHP dans le dossier `/vendor`, alors automatiquement généré par *Composer*.
 
-> You can watch this very tiny short video : (Loom : verrouillage branches GitHub)[https://www.loom.com/share/ad0c641d0b9447be9e40fa38a499953b]
-4. For deploying on caprover : add two repository secrets (settings -> secrets)
-    - CAPROVER_APP_NAME with the caprover app name as value
-    - CAPROVER_PASSWORD with the caprover password
+* Tu te rends compte que ce repo possède aussi un fichier `package.json`, ainsi qu'un `yarn.lock` : effectivement, au delà des dépendances PHP, tu auras aussi besoin de dépendances Javascript pour certaines fonctionnalités (comme la gestion des assets). Tu vas donc devoir utiliser *Yarn*, un gestionnaire de paquet spécifique aux dépendances JS, et lancer `yarn install`. De la même manière que les dépendances installées via *Composer* sont téléchargées dans `/vendor`, celles installées via *Yarn* sont téléchargées dans le dossier `/node_modules`.
 
-## Getting Started for Students
+* Ensuite, lance `yarn encore dev`. Cette commande va lancer **Webpack-Encore**, l'une des dépendances JS que tu as installées, qui va créér un *build* de tes assets (nous allons revoir ça un peu plus loin).
 
-### Prerequisites
+* Enfin, tu dois configuer tes informations de connexion à ta base de données : avec Symfony, en phase de développement, cela ce fait dans un fichier `.env.local` (**non versionné ❗**), que tu dois créér toi même en copiant le fichier `.env` à la racine du projet, et configurer la ligne commençant par `DATABASE_URL="mysql://`.
 
-1. Check composer is installed
-2. Check yarn & node are installed
+Et voilà, tu devrais être prêt·e à travailler sur ton projet Symfony! Plus qu'à lancer `symfony serve` à la racine de ton projet pour lancer ton serveur (c'est un peu comme un `php -S localhost:8000 -t public`, mais avec des outils en plus), et à te rendre à `localhost:8000` dans ton navigateur, pour y voir un magnifique GIF animé sur fond de couleur rose-wild 🙂.
 
-### Install
+## L'ARCHITECTURE
 
-1. Clone this project
-2. Run `composer install`
-3. Run `yarn install`
-4. Run `yarn encore dev` to build assets
+Un projet Symfony basique utilise une architecture de type MVC. Pas de grande surprise donc, les principes généraux sont les mêmes que pour le Simple-MVC. Faisons un tour rapide des dossiers qui nous intéressent aujourd'hui :
 
-### Working
+### /public
 
-1. Run `symfony server:start` to launch your local php web server
-2. Run `yarn run dev --watch` to launch your local server for assets
+Ici, même principe que pour le Simple-MVC : ce dossier va principalement contenir ton fichier index.php, seule porte d'entrée de ton application. Tu peux aussi observer un dossier `/build` non versionné, mais nous verrons ça juste un peu plus loin 😉.
 
-### Testing
+### /src
 
-1. Run `.vendor/bin/phpcs` to launch PHP code sniffer
-2. Run `.vendor/bin/phpstan analyse src --level max` to launch PHPStan
-3. Run `.vendor/bin/phpmd src text phpmd.xml` to launch PHP Mess Detector
-3. Run `./node_modules/.bin/eslint assets/js` to launch ESLint JS linter
-3. Run `../node_modules/.bin/sass-lint -c sass-linter.yml -v` to launch Sass-lint SASS/CSS linter
+On retrouve un dossier `/src`, contenant la logique de ton application. Dedans, on trouve un dossier `/Controller` dans lequel tu rangeras tes **contrôleurs** (en toute logique). Petite nuance : ces **contrôleurs** devront toujours renvoyer un objet de la classe Symfony `Response`, qui représente une réponse HTTP complète, ce qui peut contenir entre autres un document HTML.
 
-### Windows Users
+Comme pour le Simple-MVC, chaque *méthode* d'une classe de **contrôleur** est liée à une *route*. Seulement ici, plus besoin de se casser la tête avec des histoires de nom de la classe suivie du nom de la méthode auquel on aditionne le nombre moyen de dents d'une girafe! En effet, tu es ici complètement maître·sse de la tête qu'auront tes routes, en utilisant l'annotation `@Route`. Nous n'allons pas nous attarder maintenant sur cette notion, c'est plus parlant avec des exemples 😉.
 
-If you develop on Windows, you should edit you git configuration to change your end of line rules with this command :
+On trouve aussi un dossier `/Entity` et un dossier `/Repository`, qui, à eux deux, représentent ton **modèle**, mais nous reviendrons sur ces notions lors d'un autre groupe de support.
 
-`git config --global core.autocrlf true`
+Tu peux aussi voir un dossier `/DataFixtures`, mais ce dossier là aussi sera abordé une autre fois 😉.
 
-## Deployment
+### /templates
 
-![Img caprover](https://captain.phprover.wilders.dev/icon-512x512.png)
+Petite variation par rapport au Simple-MVC, les **vues** sont rangées hors du dossier `/src`, dans un dossier à part nommé `/templates` (notez bien : template**S**, au pluriel 😉).
 
-To deploy on Cap Rover, follow [instructions in the manual](https://caprover.com/docs/get-started.html) and add, at least, two  *"Environmental Variables"* in *"App Configs"*  tab:
+À part ça, pas de surprise majeure pour les vues : c'est du *Twig* comme tu en as déjà utilisé pour ton projet 2 🙂.
 
-* `APP_ENV` with `prod`/`dev` value
-* `DATABASE_URL` with the connection informations given by caprover when you create the related DB app.
+### /assets
 
-Caprover configuration files are : 
+Tu as dû remarquer ce dossier `/assets` tout là haut, bien loin du dossier `/public` où tu as l'habitude de le voir! Non, il ne boude pas, il est bien là pour une vraie raison.
 
-* [captain-definition](https://github.com/WildCodeSchool/sf4-pjt3-starter-kit/blob/master/captain-definition) Caprover entry point
-* [Dockerfile](https://github.com/WildCodeSchool/sf4-pjt3-starter-kit/blob/master/Dockerfile) Web app configuration for Docker container
-* [docker-compose.yml](https://github.com/WildCodeSchool/sf4-pjt3-starter-kit/blob/master/docker-compose.yml) ...not use it's used 😅
-* [docker-entry.sh](https://github.com/WildCodeSchool/sf4-pjt3-starter-kit/blob/master/docker-entry.sh) shell instruction to execute when docker image is built
-* [nginx.conf](https://github.com/WildCodeSchool/sf4-pjt3-starter-kit/blob/master/nginx.conf) Nginx server configuration
-* [php.ini](https://github.com/WildCodeSchool/sf4-pjt3-starter-kit/blob/master/php.ini) Php configuration
+En effet, **Webpack-Encore** te permet de créer automatiquement des *builds* utilisables à partir des *assets* que tu vas ranger dans le dossier `/assets`, et ce sont ces *builds* que tu pourras retrouver dans `/public/build`.
 
+Exemple : pour des raisons d'efficacité et de lisibilité de ton code, tu décides de coder tout ton style en *scss*. Seulement, les navigateurs ne pouvant lire le *scss*, il faut faire passer ce dernier par une étape de *compilation* en *css* pour obtenir une feuille de style utilisable par ton navigateur. C'est ici qu'intervient **Encore**, en te proposant par exemple de compiler ton *scss* en *css*, soit à chaque fois que tu lui demandes en lançant `yarn encore dev` (comme tu l'as fait durant l'étape d'installation), ou même automatiquement à chaque fois que tu modifies un fichier situé dans `/assets` en lançant `yarn encore dev --watch`.
 
+Mais ce n'est pas tout : **Encore** peut aussi faire d'autres choses, comme *minifier tes assets* pour l'environemment de production, etc...
 
-## Built With
+## À TOI DE JOUER !
 
-* [Symfony](https://github.com/symfony/symfony)
-* [GrumPHP](https://github.com/phpro/grumphp)
-* [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)
-* [PHPStan](https://github.com/phpstan/phpstan)
-* [PHPMD](http://phpmd.org)
-* [ESLint](https://eslint.org/)
-* [Sass-Lint](https://github.com/sasstools/sass-lint)
+C'est pas tout ça de bavarder, mais il serait temps d'essayer un peu tout ça! Commençons donc par... tout casser! En effet, le *starter kit* concocté par tes formateur·ice·s d'amour contient déjà un fichier `src/Controller/HomeController.php` (supprime le), ainsi que le dossier `/templates/home` qui y est associé (supprime le aussi 🙃). Enfin, tu peux supprimer le style préconfiguré pour le `body` dans le fichier `assets/styles/app.scss`, mais n'oublie pas de relancer `yarn encore dev` pour relancer un _build_ et que tes modifications de style soient prises en compte!
 
-## Contributing
+Une fois que c'est fait, nous allons pouvoir nous lancer dans une tâche des plus importantes! Nous allons créer des pages qui affichent des photos de leurs Majestées Velues, Seigneurs du Web et Souverains des Réseaux : les Chats 🐈.
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+### "TON AMI C'EST MOI, TU SAIS, JE SUIS TON AMI" - LE BINAIRE SYMFONY
 
-## Versioning
+*"Feurst fingz feurst"*, comme disent nos camarades d'Outre-Manche : lorsque l'on veut que notre application affiche une page web, on commence par mettre en place la route qui est associée à cette page, et donc le contrôleur qui va bien.
 
+Et c'est là que tu vas commencer à goûter à toute la puissance de ton nouveau meilleur ami : le **Binaire Symfony** 🤯. En effet, à partir de maintenant, ce dernier va te permettre de faire un certain nombre d'actions - comme générer des fichiers ou des bouts de code automatiquement (mais pas que 😉) - ce qui te fera gagner un temps considérable!
 
-## Authors
+Essaie donc d'utiliser le *maker bundle* en lançant la commande `bin/console make:controller`. On ne te demande alors qu'une chose : de donner un nom à ta classe de **contrôleur**. Appelons-la juste *"Cat"*.
 
-Wild Code School trainers team
+Une fois cette unique étape passée, tu remarques plusieurs choses :
 
-## License
+* Un fichier `CatController.php` a été généré dans ton dossier `src/Controller`, contenant la définition d'une classe de contrôleur basique nommée `CatController`, sans que tu aies eu besoin de préciser *"Controller"* lorsque l'on t'a demandé de nommer ta classe;
 
-MIT License
+* Tous les `use` fondammentaux dont une classe de **contrôleur** Symfony a besoin sont déjà là, ainsi que le `extends` qui va bien;
 
-Copyright (c) 2019 aurelien@wildcodeschool.fr
+* Une méthode `index()` simple a été générée à titre d'exemple, qui renvoie bien un objet de la classe `Response`, (ce qui inclut ici entre autres la vue twig `/templates/cat/index.html.twig` compilée en HTML, comme pour le Simple-MVC);
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+* Cette dernière méthode possède une annotation `@Route`, qui définit la route associée à cette méthode à `/cat`, et la nomme `cat`;
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+* Un dossier `/cat` a été généré dans `/templates`, contenant une vue `index.html.twig` ici aussi à titre d'exemple.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Bref, pas mal de choses se sont passées, essayons d'ammadouer tout ça!
 
-## Acknowledgments
+### HELLO, KITTY !
 
+Commençons une fois de plus, et en l'honneur de nos adorables (et vénérables) Chefs Suprêmes... par tout casser 🙃.
+
+Vide donc les `{% block body %}` et `{% block title %}` de leur contenu généré automatiquement dans ton fichier `cat/index.html.twig`. Dans la méthode `index()` de ton `CatController`, supprime aussi l'envoi du nom du contrôleur dans ta vue.
+
+Une fois que tu as fais ça, ajoute un `<h1>` contenant le titre de ton choix à ta vue dans ton `{% block body %}`, ainsi qu'un `<p>`, par exemple, contenant `Cat #{{ id }}`.
+
+Essaie donc ensuite d'injecter une variable `id` (un nombre en dur) dans ta vue depuis ton contrôleur. Pas de surprise ici, c'est du Twig comme tu en as déjà vu. En te rendant à `localhost:8000/cat` tu devrais donc voir `Cat #4` lorsque tu envoies le nombre *4* en id à ta vue.
+
+Maintenant, passons aux choses sérieuses.
+
+Placekitten est une photothèque permettant de récupérer des photos de chats et chatons trop meugnons 🐱. Elle contient 16 photos. Remplace donc ton `<p>` par `<img src="https://placekitten.com/400/500?image={{ id }} alt="a cute cat">`. Si l'`id` que tu envoies à ta vue est bien un nombre entier entre 1 et 16, tu devrais désormais voir une magnifique photo de chat! Essaie de changer l'`id` que tu envoies depuis ton contrôleur, la photo devrait changer 🙂.
+
+### "ET J'ÉTAIS SUR LA ROUTE TOUTE LA SAINTE JOURNÉE" - TOI
+
+On peut récupérer nos photos de chats, cela dit on aimerait bien laisser à l'utilisateur le choix de la photo qu'il veut voir. Rien de plus simple avec Symfony, il suffit de passer notre `id` en paramètre de notre contrôleur, et de modifier son annotation `@Route`, pour récupérer l'`id` demandé par l'utilisateur.
+
+Une fois modifié, ton contrôleur devrait ressembler à ça :
+
+```php
+/**
+ * @Route("/cat/{id}", name="cat")
+ */
+public function index(int $id): Response
+{
+    return $this->render('cat/index.html.twig', [
+        'id' => $id,
+    ]);
+}
+```
+
+Et c'est tout 🙂. Cela dit, attention, ta route `/cat` n'est désormais plus valide! En effet, à partir de maintenant, si tu veux afficher une photo de chat, il faut que tu ailles à la route `/cat/{id}`, en remplaçant `{id}` par un nombre entre 1 et 16. Essaie d'aller à `/cat/3` par exemple, tu devrais voir une photo de chat tigré dans la neige, et à `/cat/11`, tu devrais avoir un chaton blanc trop mignon 🙃. C'est bien que cet `id` est récupéré automatiquement dans ta route par le routeur Symfony via l'annotation `@Route`, et est ensuite utilisable dans ton contrôleur en lui passant `$id` en paramètre. Le routeur Symfony est intelligent, il fait directement le lien entre l'`id` de l'annotation `@Route` et `$id`, le paramètre de ta méthode `index` 🙂.
+
+On est pas mal, mais on aimerait quand même pouvoir naviguer autrement que via la barre d'adresse. Nous pourrions par exemple ajouter des liens "photo suivante" et "photo précédente" à notre page 🙂.
+
+Par contre attention, avec Symfony, on n'écrit plus les routes en dur dans l'attribut `href` de nos liens : on va préférer utiliser une *fonction Twig* nommée `path()`. Cette fonction prend en premier paramère le *nom* d'une route (celui configuré dans l'annotation `@Route` 😉), et peut prendre un deuxième paramètre sous la forme d'un *tableau Twig* contenant les valeurs que l'on va passer en attribut de notre contrôleur. Exemple :
+
+```twig
+<a href="{{ path('nom_de_la_route', {param1: valeur1, param2: valeur2}) }}">Un lien</a>
+```
+Ici, pour nos deux liens, le nom de la route devrait être *"cat"*, et nous n'avons qu'un seul paramètre - `id` - qui devrait être égal dans un cas à l'`id` actuel plus un, et dans l'autre à l'`id` actuel moins un. Au boulot!
+
+Mais pourquoi s'embêter à donner des noms à nos routes? Et bien essayons quelque chose : imaginons que nous voulions modifier la route que nous avons créée. Dans l'annotation `@Route` de ta méthode `index()`, remplace `/cat/{id}` par `/cute-cat/{id}`. Rends toi ensuite dans ton navigateur à `localhost:8000/cute-cat/11` par exemple, et essaie d'utiliser tes liens "précédent" et "suivant". Surprise, ils marchent toujours! Même si la route a changé, tu n'as pas eu besoin de modifier tes liens pour qu'ils fonctionnent car le *nom de la route* est, lui, resté le même 🙂.
+
+## CONCLUSION
+
+Voilà qui clos ce premier support sur les bases de Symfony, on se retrouve peut être pour le suivant, dans lequel on va parler bases de données avec Doctrine!
