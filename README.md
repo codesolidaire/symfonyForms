@@ -12,7 +12,7 @@
 
 ## INSTALLATION
 
-* Premièrement, clone ce repo, qui est basé sur le *starter kit* à partir duquel tu vas démarrer ton projet 3, qui a été préparé avec amour par ton/ta formateur·ice ❤️.
+* Premièrement, clone ce dépôt : https://github.com/WildCodeSchool/php-support-symfony-basics, qui est basé sur le *starter kit* à partir duquel tu vas démarrer ton projet 3, qui a été préparé avec amour par ton/ta formateur·ice ❤️.
 
 * Ce repo, comme celui du Simple-MVC, contient un `composer.json` ainsi qu'un `composer.lock`, c'est donc qu'il y a potentiellement des dépendances PHP à installer : lance `composer install` pour télécharger toutes tes dépendances PHP dans le dossier `/vendor`, alors automatiquement généré par *Composer*.
 
