@@ -6,13 +6,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class HomeController extends AbstractController
+class CatController extends AbstractController
 {
     /**
-     * @Route("/", name="home")
+     * @Route("/cute-cat/{id}", name="cat")
      */
-    public function index(): Response
+    public function index(int $id): Response
     {
-        return $this->render('home/index.html.twig');
+        return $this->render('cat/index.html.twig', [
+            'id' => $id,
+        ]);
     }
 }

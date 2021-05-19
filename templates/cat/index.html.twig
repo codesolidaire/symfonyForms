@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+    <div class="container text-center d-flex flex-column align-items-center">
+        <h1>Kittens! :3</h1>
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="{{ path('cat', {id: id - 1}) }}" class="col-1 btn btn-lg">&lt;</a>
+            <div class="card col-10 mt-4">
+                <img src="https://placekitten.com/400/500?image={{ id }}" class="card-img-top" alt="a cute cat">
+                <div class="card-body">
+                    <h2 class="card-title">Cat #{{ id }}</h2>
+                    <p class="card-text">A cute cat :3</p>
+                </div>
+            </div>
+            <a href="{{ path('cat', {id: id + 1}) }}" class="col-1 btn btn-lg">&gt;</a>
+        </div>
+    </div>
+{% endblock %}
