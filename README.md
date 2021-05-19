@@ -89,9 +89,9 @@ Bref, pas mal de choses se sont passées, essayons d'ammadouer tout ça!
 ### HELLO, KITTY !
 
 Commençons une fois de plus, et en l'honneur de nos adorables (et vénérables) Chefs Suprêmes... par tout casser 🙃.
-
+<!--- {% raw %} --->
 Vide donc les `{% block body %}` et `{% block title %}` de leur contenu généré automatiquement dans ton fichier `cat/index.html.twig`. Dans la méthode `index()` de ton `CatController`, supprime aussi l'envoi du nom du contrôleur dans ta vue.
-
+<!--- {% endraw %} --->
 Une fois que tu as fais ça, ajoute un `<h1>` contenant le titre de ton choix à ta vue dans ton `{% block body %}`, ainsi qu'un `<p>`, par exemple, contenant `Cat #{{ id }}`.
 
 Essaie donc ensuite d'injecter une variable `id` (un nombre en dur) dans ta vue depuis ton contrôleur. Pas de surprise ici, c'est du Twig comme tu en as déjà vu. En te rendant à `localhost:8000/cat` tu devrais donc voir `Cat #4` lorsque tu envoies le nombre *4* en id à ta vue.
