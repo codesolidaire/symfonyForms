@@ -91,7 +91,7 @@ Bref, pas mal de choses se sont passées, essayons d'ammadouer tout ça!
 Commençons une fois de plus, et en l'honneur de nos adorables (et vénérables) Chefs Suprêmes... par tout casser 🙃.
 <!--- {% raw %} --->
 Vide donc les `{% block body %}` et `{% block title %}` de leur contenu généré automatiquement dans ton fichier `cat/index.html.twig`. Dans la méthode `index()` de ton `CatController`, supprime aussi l'envoi du nom du contrôleur dans ta vue.
-<!--- {% endraw %} --->
+
 Une fois que tu as fais ça, ajoute un `<h1>` contenant le titre de ton choix à ta vue dans ton `{% block body %}`, ainsi qu'un `<p>`, par exemple, contenant `Cat #{{ id }}`.
 
 Essaie donc ensuite d'injecter une variable `id` (un nombre en dur) dans ta vue depuis ton contrôleur. Pas de surprise ici, c'est du Twig comme tu en as déjà vu. En te rendant à `localhost:8000/cat` tu devrais donc voir `Cat #4` lorsque tu envoies le nombre *4* en id à ta vue.
@@ -132,7 +132,7 @@ Ici, pour nos deux liens, le nom de la route devrait être *"cat"*, et nous n'av
 Mais pourquoi s'embêter à donner des noms à nos routes? Et bien essayons quelque chose : imaginons que nous voulions modifier la route que nous avons créée. Dans l'annotation `@Route` de ta méthode `index()`, remplace `/cat/{id}` par `/cute-cat/{id}`. Rends toi ensuite dans ton navigateur à `localhost:8000/cute-cat/11` par exemple, et essaie d'utiliser tes liens "précédent" et "suivant". Surprise, ils marchent toujours! Même si la route a changé, tu n'as pas eu besoin de modifier tes liens pour qu'ils fonctionnent car le *nom de la route* est, lui, resté le même 🙂.
 
 Tes boutons "précédent" et "suivant" sont bien beaux, mais tu aimerais pouvoir donner à ton utilisateur la possibilité de sauter d'une image à une autre sans devoir parcourir toute la phototèque de placekitten. Maintenant que tu sais créer des liens avec Symfony, à toi de créer tous ces liens sous la forme que tu veux 🙂 (une navbar à inclure dans base.html.twig avec une boucle twig allant de 1 à 16 par exemple? 😉).
-
+<!--- {% endraw %} --->
 ## CONCLUSION
 
 Voilà qui clos ce premier support sur les bases de Symfony, on se retrouve peut être pour le suivant, dans lequel on va parler bases de données avec Doctrine!
