@@ -122,7 +122,7 @@ Et c'est tout 🙂. Cela dit, attention, ta route `/cat` n'est désormais plus v
 
 On est pas mal, mais on aimerait quand même pouvoir naviguer autrement que via la barre d'adresse. Nous pourrions par exemple ajouter des liens "photo suivante" et "photo précédente" à notre page 🙂.
 
-Par contre attention, avec Symfony, on n'écrit plus les routes en dur dans l'attribut `href` de nos liens : on va préférer utiliser une *fonction Twig* nommée `path()`. Cette fonction prend en premier paramère le *nom* d'une route (celui configuré dans l'annotation `@Route` 😉), et peut prendre un deuxième paramètre sous la forme d'un *tableau Twig* contenant les valeurs que l'on va passer en attribut de notre contrôleur. Exemple :
+Par contre attention, avec Symfony, on n'écrit plus les routes en dur dans l'attribut `href` de nos liens : on va préférer utiliser une *fonction Twig* nommée `path()`. Cette fonction prend en premier paramère le *nom* d'une route (celui configuré dans l'annotation `@Route` 😉), et peut prendre un deuxième paramètre sous la forme d'un *tableau Twig* contenant les valeurs que l'on va passer en argument de notre contrôleur. Exemple :
 
 ```twig
 <a href="{{ path('nom_de_la_route', {param1: valeur1, param2: valeur2}) }}">Un lien</a>
@@ -130,6 +130,8 @@ Par contre attention, avec Symfony, on n'écrit plus les routes en dur dans l'at
 Ici, pour nos deux liens, le nom de la route devrait être *"cat"*, et nous n'avons qu'un seul paramètre - `id` - qui devrait être égal dans un cas à l'`id` actuel plus un, et dans l'autre à l'`id` actuel moins un. Au boulot!
 
 Mais pourquoi s'embêter à donner des noms à nos routes? Et bien essayons quelque chose : imaginons que nous voulions modifier la route que nous avons créée. Dans l'annotation `@Route` de ta méthode `index()`, remplace `/cat/{id}` par `/cute-cat/{id}`. Rends toi ensuite dans ton navigateur à `localhost:8000/cute-cat/11` par exemple, et essaie d'utiliser tes liens "précédent" et "suivant". Surprise, ils marchent toujours! Même si la route a changé, tu n'as pas eu besoin de modifier tes liens pour qu'ils fonctionnent car le *nom de la route* est, lui, resté le même 🙂.
+
+Tes boutons "précédent" et "suivant" sont bien beaux, mais tu aimerais pouvoir donner à ton utilisateur la possibilité de sauter d'une image à une autre sans devoir parcourir toute la phototèque de placekitten. Maintenant que tu sais créer des liens avec Symfony, à toi de créer tous ces liens sous la forme que tu veux 🙂 (une navbar à inclure dans base.html.twig avec une boucle twig allant de 1 à 16 par exemple? 😉).
 
 ## CONCLUSION
 
