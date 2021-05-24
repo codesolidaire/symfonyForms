@@ -154,7 +154,7 @@ Maintenant, plus qu'à appliquer cette migration en lançant `bin/console doctri
 Une fois que tu as fait ça, vas voir dans ton serveur MySQL : ta base de données a bien été mise à jour avec la table `cat`, ainsi qu'une table auto-générée `doctrine_migration_versions`. En effet, cette table permet à Doctrine de savoir où il en est au niveau des migrations : lorsque tu lances `bin/console do:mi:mi`, Doctrine va commencer par aller vérifier s'il y a des migrations dans ton dossier `/migrations` qu'il ne trouve pas dans la table `doctrine_migration_versions`, et va simplement reprendre là où il s'était arrêté 🙂.
 
 
-### "LES CHIENS ONT DES MAÎTRES, LES CHATS ONT DES SERVTEURS"
+### "LES CHIENS ONT DES MAÎTRES, LES CHATS ONT DES SERVITEURS"
 
 Et voilà que tu as créé une première entité! Maintenant, compliquons un peu les choses 🙂. Disons que nous voulons aussi représenter les fidèles serviteurs des chats - les *"humains"* - et leurs relations ("maître" - "serviteur"). Imaginons donc qu'**un chat peut avoir plusieurs serviteurs**,  **un humain peut avoir plusieurs maîtres** (dans le cas d'une "garde partagée").
 
