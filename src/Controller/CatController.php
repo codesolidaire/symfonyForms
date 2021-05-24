@@ -9,12 +9,10 @@ use Symfony\Component\Routing\Annotation\Route;
 class CatController extends AbstractController
 {
     /**
-     * @Route("/cute-cat/{id}", name="cat")
+     * @Route("/", name="cats")
      */
-    public function index(int $id): Response
+    public function index(): Response
     {
-        return $this->render('cat/index.html.twig', [
-            'id' => $id,
-        ]);
+        return $this->render('cat/index.html.twig');
     }
 }

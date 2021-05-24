@@ -1,138 +1,217 @@
-# SUPPORT - SYMFONY : LES BASES
+# SUPPORT - SYMFONY : DOCTRINE
 
 ## OBJECTIFS
 
-* Apprivoiser l'arborescence d'un projet Symfony;
+* Apprivoiser les bases de Doctrine;
 
-* Apprendre à se lancer dans le développement d'un projet Symfony;
+* Créer une entité "chat", parce que miaou 🐈;
 
-* Comprendre le fonctionnement du routing de Symfony avec la mise en place d'un contrôleur basique;
-
-* Afficher des photos de chats, parce que les chats c'est trop meugnon 😽.
+* Créer une entité "humain" parce que les chats ont bien besoin de serviteurs 🙃.
 
 ## INSTALLATION
 
-* Premièrement, clone ce dépôt : https://github.com/WildCodeSchool/php-support-symfony-basics, qui est basé sur le *starter kit* à partir duquel tu vas démarrer ton projet 3, qui a été préparé avec amour par ton/ta formateur·ice ❤️.
+Pas de surprises, tu devrais déjà avoir fait ça une paire de fois désormais 🙂.
 
-* Ce repo, comme celui du Simple-MVC, contient un `composer.json` ainsi qu'un `composer.lock`, c'est donc qu'il y a potentiellement des dépendances PHP à installer : lance `composer install` pour télécharger toutes tes dépendances PHP dans le dossier `/vendor`, alors automatiquement généré par *Composer*.
+* Premièrement, clone ce dépôt : https://github.com/WildCodeSchool/php-support-symfony-doctrine.
 
-* Tu te rends compte que ce repo possède aussi un fichier `package.json`, ainsi qu'un `yarn.lock` : effectivement, au delà des dépendances PHP, tu auras aussi besoin de dépendances Javascript pour certaines fonctionnalités (comme la gestion des assets). Tu vas donc devoir utiliser *Yarn*, un gestionnaire de paquet spécifique aux dépendances JS, et lancer `yarn install`. De la même manière que les dépendances installées via *Composer* sont téléchargées dans `/vendor`, celles installées via *Yarn* sont téléchargées dans le dossier `/node_modules`.
+* Lance `composer install` à la racine du projet.
 
-* Ensuite, lance `yarn encore dev`. Cette commande va lancer **Webpack-Encore**, l'une des dépendances JS que tu as installées, qui va créér un *build* de tes assets (nous allons revoir ça un peu plus loin).
+* Lance `yarn install`.
 
-* Enfin, tu dois configuer tes informations de connexion à ta base de données : avec Symfony, en phase de développement, cela ce fait dans un fichier `.env.local` (**non versionné ❗**), que tu dois créér toi même en copiant le fichier `.env` à la racine du projet, et configurer la ligne commençant par `DATABASE_URL="mysql://`.
+* Lance `yarn encore dev` (ou `yarn encore dev --watch`).
 
-Et voilà, tu devrais être prêt·e à travailler sur ton projet Symfony! Plus qu'à lancer `symfony serve` à la racine de ton projet pour lancer ton serveur (c'est un peu comme un `php -S localhost:8000 -t public`, mais avec des outils en plus), et à te rendre à `localhost:8000` dans ton navigateur, pour y voir un magnifique GIF animé sur fond de couleur rose-wild 🙂.
+* Créé un fichier `.env.local` à partir du fichier `.env` à la racine du projet, et configure-le avec les informations de connexion à ta base de données.
 
-## L'ARCHITECTURE
+## "ENTITY", "REPOSITORY", KÉSAKO?
 
-Un projet Symfony basique utilise une architecture de type MVC. Pas de grande surprise donc, les principes généraux sont les mêmes que pour le Simple-MVC. Faisons un tour rapide des dossiers qui nous intéressent aujourd'hui :
+Comme tu as déjà dû t'en rendre compte, avec Symfony, le *modèle* (le **M** de **M**VC) ne ressemble pas à ce que tu as l'habitude de voir. En effet, avec le Simple-MVC, tu étais habitué·e à avoir des classes uniques représentant ton modèle : les *"Manager"*. Cependant, comme Symfony utilise **Doctrine** (un *ORM*), le *modèle* est divisé en deux parties distinctes : les *Entity* et les *Repository*. Revoyons ces quelques notions plus en détail.
 
-### /public
+### "DOCTRINE"? MAIS QU'EST-CE QUE C'EST QUE CES MANIGANCES?
 
-Ici, même principe que pour le Simple-MVC : ce dossier va principalement contenir ton fichier index.php, seule porte d'entrée de ton application. Tu peux aussi observer un dossier `/build` non versionné, mais nous verrons ça juste un peu plus loin 😉.
+Doctrine est un *ORM*, pour *Object Relational Mapping*. "Mais qu'est-ce donc qu'un ORM, et pourquoi diable utiliser ce type d'outils?!!", vous entends-je vous exclamer! 😱
 
-### /src
+Et bien en réalité, ce n'est pas si compliqué 🤓 : le concept d'ORM est basé sur le constat simple que la *gestion des bases de données* et la *programmation orientée objet* présentent un certain nombre de similitudes. En effet, dans les deux cas, l'un des buts est de représenter des entités (des choses concrètes ou abstraites), et leurs relations entre elles. Ainsi, on peut faire un certain nombre de parallèles entre ces deux notions, par exemple :
 
-On retrouve un dossier `/src`, contenant la logique de ton application. Dedans, on trouve un dossier `/Controller` dans lequel tu rangeras tes **contrôleurs** (en toute logique). Petite nuance : ces **contrôleurs** devront toujours renvoyer un objet de la classe Symfony `Response`, qui représente une réponse HTTP complète, ce qui peut contenir entre autres un document HTML.
+* Dans une BDD, une *entité* est représentée par une *table*, quand en POO, elle est représentée par une *classe*;
 
-Comme pour le Simple-MVC, chaque *méthode* d'une classe de **contrôleur** est liée à une *route*. Seulement ici, plus besoin de se casser la tête avec des histoires de nom de la classe suivie du nom de la méthode auquel on aditionne le nombre moyen de dents d'une girafe! En effet, tu es ici complètement maître·sse de la tête qu'auront tes routes, en utilisant l'annotation `@Route`. Nous n'allons pas nous attarder maintenant sur cette notion, c'est plus parlant avec des exemples 😉.
+* Dans une BDD, chaque *représentant* d'une entité est un *tuple* (ou une *ligne*), tandis qu'en POO, on parle d'*instance de classe* ou d'*objet*.
 
-On trouve aussi un dossier `/Entity` et un dossier `/Repository`, qui, à eux deux, représentent ton **modèle**, mais nous reviendrons sur ces notions lors d'un autre groupe de support.
+* Dans une BDD, les *caractéristiques* d'une entité sont représentées par des *colonnes*, quand en POO, celles-ci prennent la forme de *propriétés de classe*;
 
-Tu peux aussi voir un dossier `/DataFixtures`, mais ce dossier là aussi sera abordé une autre fois 😉.
+* Dans une BDD, les *liens* entre les classes se font via des *clés étrangères* et des *tables intermédiaires*, alors qu'en POO, ceux-ci se font via des *propriétés de classe* représentant *une autre entité*;
 
-### /templates
+Bref, tu l'as compris, la ressemblance est frappante! Au final, ta base de données va s'occuper de stocker des informations, tandis que la programation orientée objet va te permettre de les manipuler.
 
-Petite variation par rapport au Simple-MVC, les **vues** sont rangées hors du dossier `/src`, dans un dossier à part nommé `/templates` (notez bien : template**S**, au pluriel 😉).
+Doctrine est un outil qui va donc faire le parallèle entre ces notions, et va te permettre de te concentrer sur le code et la logique métier. Tu verras, avec Symfony, tu n'auras potentiellement plus du tout besoin d'aller trifouiller directement dans ton serveur MySQL 😉.
 
-À part ça, pas de surprise majeure pour les vues : c'est du *Twig* comme tu en as déjà utilisé pour ton projet 2 🙂.
+### UNE "ENTITÉ"? MOI J'APPELLE ÇA UN "TRUC"...
 
-### /assets
+Comme vu plus haut, une entité, c'est au final une "chose" que tu as besoin de représenter - par exemple, un chat. Et dans Symfony en particulier, ce sera un type de classe spécifique, que tu rangeras en toute logique dans le dossier `/src/Entity` 🙃. Cette classe devra contenir au strict minimum les propriétés dont tu as besoin pour représenter ton entité dans la logique métier de ton application, et les getters et setters qui vont avec.
 
-Tu as dû remarquer ce dossier `/assets` tout là haut, bien loin du dossier `/public` où tu as l'habitude de le voir! Non, il ne boude pas, il est bien là pour une vraie raison.
+Dans l'exemple de nos chats, cela veux dire qu'on va avoir une classe `App\Entity\Cat`, avec quelques propriétés de classe, comme :
 
-En effet, **Webpack-Encore** te permet de créer automatiquement des *builds* utilisables à partir des *assets* que tu vas ranger dans le dossier `/assets`, et ce sont ces *builds* que tu pourras retrouver dans `/public/build`.
+* Un identifiant unique
+* Un nom
+* Un lien vers une photo
+* (etc...)
 
-Exemple : pour des raisons d'efficacité et de lisibilité de ton code, tu décides de coder tout ton style en *scss*. Seulement, les navigateurs ne pouvant lire le *scss*, il faut faire passer ce dernier par une étape de *compilation* en *css* pour obtenir une feuille de style utilisable par ton navigateur. C'est ici qu'intervient **Encore**, en te proposant par exemple de compiler ton *scss* en *css*, soit à chaque fois que tu lui demandes en lançant `yarn encore dev` (comme tu l'as fait durant l'étape d'installation), ou même automatiquement à chaque fois que tu modifies un fichier situé dans `/assets` en lançant `yarn encore dev --watch`.
+Ainsi que, encore une fois, les getters et setters associés.
 
-Mais ce n'est pas tout : **Encore** peut aussi faire d'autres choses, comme *minifier tes assets* pour l'environemment de production, etc...
+Tu peux te dire que ça fait potentiellement beaucoup de code à écrire, mais ne t'inquiète pas, le *binaire Symfony* est là pour t'aider 😉.
 
-## À TOI DE JOUER !
+### DES "MIGRATIONS"? C'EST UNE HISTOIRE D'OISEAUX ÇA, NON?
 
-C'est pas tout ça de bavarder, mais il serait temps d'essayer un peu tout ça! Commençons donc par... tout casser! En effet, le *starter kit* concocté par tes formateur·ice·s d'amour contient déjà un fichier `src/Controller/HomeController.php` (supprime le), ainsi que le dossier `/templates/home` qui y est associé (supprime le aussi 🙃). Enfin, tu peux supprimer le style préconfiguré pour le `body` dans le fichier `assets/styles/app.scss`, mais n'oublie pas de relancer `yarn encore dev` pour relancer un _build_ et que tes modifications de style soient prises en compte!
+"Ok, jusque là, ça va, mais qu'en est-il des tables dans ma base de données?"
 
-Une fois que c'est fait, nous allons pouvoir nous lancer dans une tâche des plus importantes! Nous allons créer des pages qui affichent des photos de leurs Majestées Velues, Seigneurs du Web et Souverains des Réseaux : les Chats 🐈.
+Et bien, tu n'as pas à t'en occuper, justement! À chaque fois que tu vas ajouter ou faire une modification sur une entité (donc dans une *classe suivie par Doctrine* du namespace `App\Entity` dans le dossier `/src/Entity`), tu vas pouvoir créer une *migration*. Une *migration* est un type de classe Symfony contenant des requêtes d'administration de base de données (en gros, des *"CREATE TABLE"*, *"ALTER TABLE"*, etc...).
 
-### "TON AMI C'EST MOI, TU SAIS, JE SUIS TON AMI" - LE BINAIRE SYMFONY
+Ensuite, une fois que tu as créé une migration, il te suffit de la lancer pour appliquer les modifications à ta base de donnée 🙂.
 
-*"Feurst fingz feurst"*, comme disent nos camarades d'Outre-Manche : lorsque l'on veut que notre application affiche une page web, on commence par mettre en place la route qui est associée à cette page, et donc le contrôleur qui va bien.
+Tu pourrais très bien faire tout ça toi même à la main, mais ici aussi, le *binaire Symfony* est ton ami 😉. En plus, il se charge même de créer les clés étrangères et les tables intermédiaires quand tu as besoin de créer des relations entre tes entités! 🤩
 
-Et c'est là que tu vas commencer à goûter à toute la puissance de ton nouveau meilleur ami : le **Binaire Symfony** 🤯. En effet, à partir de maintenant, ce dernier va te permettre de faire un certain nombre d'actions - comme générer des fichiers ou des bouts de code automatiquement (mais pas que 😉) - ce qui te fera gagner un temps considérable!
+Aussi, ce principe de migrations permet à toutes les personnes qui récupèrent un projet Symfony de récupérer aussi la structure de base de données qui va avec : il leur suffit juste de lancer toutes les migrations dans l'ordre au moment d'installer le projet, et hop, elles ont une base de donnée dans son état le plus récent!
 
-Essaie donc d'utiliser le *maker bundle* en lançant la commande `bin/console make:controller`. On ne te demande alors qu'une chose : de donner un nom à ta classe de **contrôleur**. Appelons-la juste *"Cat"*.
+### ET DES "REPOSITORY"? MAIS QUE VIENT FAIRE GITHUB DANS TOUT ÇA?
 
-Une fois cette unique étape passée, tu remarques plusieurs choses :
+Ici, rien à voir avec les *repo GitHub*. En fait, les *Repository* ressemblent aux *Manager* du Simple-MVC. En effet, les *Entity* définissent la *forme* des choses que tu veux représenter, mais tu remarques que nulle part nous n'avons défini de méthodes permettant *d'interagir* avec ces entités en base de données (c'est à dire faire des requêtes de type *"INSERT INTO"* ou *"SELECT"*, par exemple) 🤔.
 
-* Un fichier `CatController.php` a été généré dans ton dossier `src/Controller`, contenant la définition d'une classe de contrôleur basique nommée `CatController`, sans que tu aies eu besoin de préciser *"Controller"* lorsque l'on t'a demandé de nommer ta classe;
+Et bien c'est justement le but des *Repository* en Symfony. Et comme avec le Simple-MVC, ces *Repository* possèdent un certain nombre de méthodes "prédéfinies", mais de façon beaucoup plus puissante que dans le Simple-MVC (en réalité, elles sont *fabriquées à la volée* 😉).
 
-* Tous les `use` fondammentaux dont une classe de **contrôleur** Symfony a besoin sont déjà là, ainsi que le `extends` qui va bien;
+Dans la majorité des cas (mais pas dans *tous* les cas ❗), tu laisseras donc Symfony s'occuper de générer ces classes-ci automatiquement (encore grâce au *binaire Symfony*, je t'avais bien dit que ça allait être ton nouveau meilleur ami 😉), et tu n'auras pas souvent besoin d'aller les modifier "à la main" 🙂.
 
-* Une méthode `index()` simple a été générée à titre d'exemple, qui renvoie bien un objet de la classe `Response`, (ce qui inclut ici entre autres la vue twig `/templates/cat/index.html.twig` compilée en HTML, comme pour le Simple-MVC);
+## À TOI DE JOUER!
 
-* Cette dernière méthode possède une annotation `@Route`, qui définit la route associée à cette méthode à `/cat`, et la nomme `cat`;
+Trèves de bavardages, essayons un peu tout ça!
 
-* Un dossier `/cat` a été généré dans `/templates`, contenant une vue `index.html.twig` ici aussi à titre d'exemple.
+Le projet que tu as récupéré est assez vide, et le but ne vas pas nécessairement être de travailler sur des contrôleurs et des vues, mais de se concentrer sur la création d'entités et la gestions des relations entre celles-ci.
 
-Bref, pas mal de choses se sont passées, essayons d'ammadouer tout ça!
+Le but va être dans un premier temps de créer une entitié *"cat"*, relativement simple. Ensuite, nous créérons une seconde entité *"human"*, et nous verrons comment lier nos 2 entités. Nous n'allons pas voir comment ajouter / modifier / supprimer des valeurs en base de données, ce sera le sujet d'un autre groupe de support 😉.
 
-### HELLO, KITTY !
+### "HÉ MAIS ATTENDS! J'AI PAS ENCORE CRÉE MA BASE DE DONNÉES!"
 
-Commençons une fois de plus, et en l'honneur de nos adorables (et vénérables) Chefs Suprêmes... par tout casser 🙃.
-<!--- {% raw %} --->
-Vide donc les `{% block body %}` et `{% block title %}` de leur contenu généré automatiquement dans ton fichier `cat/index.html.twig`. Dans la méthode `index()` de ton `CatController`, supprime aussi l'envoi du nom du contrôleur dans ta vue.
+En effet, avant tout chose, il faut créer une base de données avec les informations que tu as utilisées dans ton fichier `.env.local`. Pour cela, deux cas se présentent :
 
-Une fois que tu as fais ça, ajoute un `<h1>` contenant le titre de ton choix à ta vue dans ton `{% block body %}`, ainsi qu'un `<p>`, par exemple, contenant `Cat #{{ id }}`.
+* Tu utilises l'utilisateur `root` ou un utilisateur générique ayant tous les droits nécessaires à la création et l'administration d'une base de données : dans ce cas, lance `bin/console doctrine:database:create` (ou `bin/console d:d:c`), et voilà, si tu as bien configuré ton fichier `.env.local`, tu ne devrais pas avoir d'erreur et avoir créé ta base de données 🙂;
 
-Essaie donc ensuite d'injecter une variable `id` (un nombre en dur) dans ta vue depuis ton contrôleur. Pas de surprise ici, c'est du Twig comme tu en as déjà vu. En te rendant à `localhost:8000/cat` tu devrais donc voir `Cat #4` lorsque tu envoies le nombre *4* en id à ta vue.
+* Tu décides de travailler avec un utilisateur spécifique à ton projet, dans ce cas : il faut que tu lances ton serveur de gestion de bases de données, que tu crées ta base et l'utilisateur qui va avec, et que tu lui donne les droits sur cette base à la main - en effet, Doctrine ne prend pas en charge la création/gestion des utilisateurs, mais uniquement celles des bases de données. Tu peux ensuite lancer `bin/console doctrine:database:drop --force` (ou `bin/console d:d:d --force`) - si tu n'as pas d'erreur, c'est que ta database a bien été *supprimée* et donc qu'elle est bien configurée pour Doctrine, et tu peux lancer `bin/console d:d:c` pour la recréer 😉.
 
-Maintenant, passons aux choses sérieuses.
+### "OK, ET MAINTENANT ON CODE L'ENTITÉ ET LE REPO POUR MES CHATS, C'EST ÇA?"
 
-Placekitten est une photothèque permettant de récupérer des photos de chats et chatons trop meugnons 🐱. Elle contient 16 photos. Remplace donc ton `<p>` par `<img src="https://placekitten.com/400/500?image={{ id }} alt="a cute cat">`. Si l'`id` que tu envoies à ta vue est bien un nombre entier entre 1 et 16, tu devrais désormais voir une magnifique photo de chat! Essaie de changer l'`id` que tu envoies depuis ton contrôleur, la photo devrait changer 🙂.
+Disons que nous voulons que nos chats soient représentés par :
 
-### "ET J'ÉTAIS SUR LA ROUTE TOUTE LA SAINTE JOURNÉE" - TOI
+* leur nom,
+* une photo (sous la forme d'une url*),
 
-On peut récupérer nos photos de chats, cela dit on aimerait bien laisser à l'utilisateur le choix de la photo qu'il veut voir. Rien de plus simple avec Symfony, il suffit de passer notre `id` en paramètre de notre contrôleur, et de modifier son annotation `@Route`, pour récupérer l'`id` demandé par l'utilisateur.
+et c'est tout.
 
-Une fois modifié, ton contrôleur devrait ressembler à ça :
+On pourrait se dire qu'il faut commencer par créer une classe Cat, qu'on lui ajoute les propriétés qui vont bien, les getters et setters, etc... Et bien non! Enfin, si, mais pas à la main, car rappelle-toi : ***le binaire Symfony est ton ami*** 😉.
 
-```php
-/**
- * @Route("/cat/{id}", name="cat")
- */
-public function index(int $id): Response
-{
-    return $this->render('cat/index.html.twig', [
-        'id' => $id,
-    ]);
-}
+En effet, le *maker bundle* de Symfony possède une commande `bin/console make:entity` justement pour faire tout ça 🤩. 
+
+Essaie de la lancer, et suis les différentes étapes :
+
+* on commence par te demander le nom que tu veux donner à ton entité - en toute logique, réponds "Cat" 🙃;
+
+* ensuite, on te demande d'ajouter des propriétés, et d'appuyer sur entrée lorsque tu as terminé
+  * à chaque fois, commence par indiquer le nom de la propriété (donc *"name"* pour la première, et *"url"* ou *"image"* pour la seconde),
+  * après le nom, on te demande ensuite d'indiquer le type de la propriété (donc *"string"* dans les deux cas pour nous),
+  * et enfin, on te demande de préciser si cette propriété peut être nulle en base de données (donc non dans les deux cas, pour nous).
+
+Et voilà! Tu peux appuyer sur *Entrée* quand tu as terminé de configurer ces deux propriétés, et aller voir tout ce qui a été fait pour toi!
+
+Tu peux donc remarquer que :
+
+* ton entité *Cat* a été créée, avec toutes les propriétés que tu as indiquées et les getters et setters qui vont bien (ainsi que les `use` et la déclaration du `namespace`);
+
+* ton *Entity* possède aussi une propriété `$id`, que tu n'as pas eu besoin de préciser au *maker bundle* (et le getter et setter qui vont avec);
+
+* ton *Entity* et chacune de ses propriétés possèdent une annotation `@ORM` permettant à *Doctrine* de savoir comment les gérer;
+
+* le *Repository* associé à ton entité *Cat* - le *CatRepository* - a aussi été généré automatiquement;
+
+* le *maker bundle* t'indique la marche à suivre pour la suite :
+  
+```shell
+Next: When you're ready, create a migration with php bin/console make:migration
 ```
 
-Et c'est tout 🙂. Cela dit, attention, ta route `/cat` n'est désormais plus valide! En effet, à partir de maintenant, si tu veux afficher une photo de chat, il faut que tu ailles à la route `/cat/{id}`, en remplaçant `{id}` par un nombre entre 1 et 16. Essaie d'aller à `/cat/3` par exemple, tu devrais voir une photo de chat tigré dans la neige, et à `/cat/11`, tu devrais avoir un chaton blanc trop mignon 🙃. C'est bien que cet `id` est récupéré automatiquement dans ta route par le routeur Symfony via l'annotation `@Route`, et est ensuite utilisable dans ton contrôleur en lui passant `$id` en paramètre. Le routeur Symfony est intelligent, il fait directement le lien entre l'`id` de l'annotation `@Route` et `$id`, le paramètre de ta méthode `index` 🙂.
+Bref, tout ça en répondant vite fait à quelques questions en lignes de commande, c'est quand même bien cool! 🤩
 
-On est pas mal, mais on aimerait quand même pouvoir naviguer autrement que via la barre d'adresse. Nous pourrions par exemple ajouter des liens "photo suivante" et "photo précédente" à notre page 🙂.
+### "ET DU COUP MAINTENANT ON MIGRE, C'EST CHAT?"
 
-Par contre attention, avec Symfony, on n'écrit plus les routes en dur dans l'attribut `href` de nos liens : on va préférer utiliser une *fonction Twig* nommée `path()`. Cette fonction prend en premier paramère le *nom* d'une route (celui configuré dans l'annotation `@Route` 😉), et peut prendre un deuxième paramètre sous la forme d'un *tableau Twig* contenant les valeurs que l'on va passer en argument de notre contrôleur. Exemple :
+Yup! Maintenant qu'on a fait le côté POO, il faut s'occuper du côté BDD. En effet, si tu vas voir dans ton serveur MySQL, tu remarqueras que pour l'instant, il ne s'est rien passé dans ta base de données.
 
-```twig
-<a href="{{ path('nom_de_la_route', {param1: valeur1, param2: valeur2}) }}">Un lien</a>
+Pour que les modifications de ton *modèle* soient prises en compte côté BDD, il faut dans un premier temps créer une migration. Ici encore, le *maker bundle* est là pour toi 🥰.
+
+Lance `bin/console make:migration`. Un fichier de migration a été créé dans le dossier `/migrations` (sans surprise 🙃). Dans ce fichier, tu trouveras une classe de migration contenant principalement une méthode `up()` et une méthode `down()` :
+
+* La première sert à appliquer les modifications permettant de mettre à jour la base de données par rapport à son état précédent (donc ici, elle crée la table "cat" avec toutes les caractéristiques demandées, puisqu'elle n'existait pas encore);
+
+* La seconde sert à faire revenir la base de données dans l'état dans lequel elle était avant la création de la migration (donc ici, elle détruit la table "cat").
+
+Maintenant, plus qu'à appliquer cette migration en lançant `bin/console doctrine:migrations:migrate` (ou `bin/console do:mi:mi` pour les musicien·ne·s 🎵).
+
+Une fois que tu as fait ça, vas voir dans ton serveur MySQL : ta base de données a bien été mise à jour avec la table `cat`, ainsi qu'une table auto-générée `doctrine_migration_versions`. En effet, cette table permet à Doctrine de savoir où il en est au niveau des migrations : lorsque tu lances `bin/console do:mi:mi`, Doctrine va commencer par aller vérifier s'il y a des migrations dans ton dossier `/migrations` qu'il ne trouve pas dans la table `doctrine_migration_versions`, et va simplement reprendre là où il s'était arrêté 🙂.
+
+
+### "LES CHIENS ONT DES MAÎTRES, LES CHATS ONT DES SERVTEURS"
+
+Et voilà que tu as créé une première entité! Maintenant, compliquons un peu les choses 🙂. Disons que nous voulons aussi représenter les fidèles serviteurs des chats - les *"humains"* - et leurs relations ("maître" - "serviteur"). Imaginons donc qu'**un chat peut avoir plusieurs serviteurs**,  **un humain peut avoir plusieurs maîtres** (dans le cas d'une "garde partagée").
+
+Nous allons donc créer une entité `Human` avec quelques propriétés :
+
+* name
+* masters
+
+et c'est tout.
+
+Pour cela, même démarche que pour la création de notre enntité `Cat` : on met à profit le *maker bundle*. Cependant, quand tu vas créer ta propriété `masters`, que va-t-on indiquer lorsque le *maker bundle* nous demandera le type de la propriété? Et bien tout est prévu : il te suffit d'indiquer le type *"relation"*, et le *maker bundle* te posera un quelques questions et te guidera dans la création de cette propriété 🤩 : 
+
+* en premier, il te demande quelle est l'entité avec laquelle cette relation sert de liaison, donc pour nous, `Cat`;
+
+* ensuite, il te propose de choisir parmi tous les types de relations dont tu pourrais avoir besoin, avec même des indications sur ce qu'elles signifient 🤩 :
+
+```shell
+What type of relationship is this?
+------------ ---------------------------------------------------------------- 
+  Type         Description                                                     
+------------ ---------------------------------------------------------------- 
+ ManyToOne    Each Human relates to (has) one Cat.                            
+              Each Cat can relate to (can have) many Human objects            
+                                                                               
+ OneToMany    Each Human can relate to (can have) many Cat objects.           
+              Each Cat relates to (has) one Human                             
+                                                                               
+ ManyToMany   Each Human can relate to (can have) many Cat objects.           
+              Each Cat can also relate to (can also have) many Human objects  
+                                                                               
+ OneToOne     Each Human relates to (has) exactly one Cat.                    
+              Each Cat also relates to (has) exactly one Human.               
+------------ ----------------------------------------------------------------
 ```
-Ici, pour nos deux liens, le nom de la route devrait être *"cat"*, et nous n'avons qu'un seul paramètre - `id` - qui devrait être égal dans un cas à l'`id` actuel plus un, et dans l'autre à l'`id` actuel moins un. Au boulot!
 
-Mais pourquoi s'embêter à donner des noms à nos routes? Et bien essayons quelque chose : imaginons que nous voulions modifier la route que nous avons créée. Dans l'annotation `@Route` de ta méthode `index()`, remplace `/cat/{id}` par `/cute-cat/{id}`. Rends toi ensuite dans ton navigateur à `localhost:8000/cute-cat/11` par exemple, et essaie d'utiliser tes liens "précédent" et "suivant". Surprise, ils marchent toujours! Même si la route a changé, tu n'as pas eu besoin de modifier tes liens pour qu'ils fonctionnent car le *nom de la route* est, lui, resté le même 🙂.
+Ici, on a dit que chaque humain peut être lié à plusiquers chats, et chaque chat peut avoir plusieurs humains : on a donc une relation de type *ManyToMany*.
 
-Tes boutons "précédent" et "suivant" sont bien beaux, mais tu aimerais pouvoir donner à ton utilisateur la possibilité de sauter d'une image à une autre sans devoir parcourir toute la phototèque de placekitten. Maintenant que tu sais créer des liens avec Symfony, à toi de créer tous ces liens sous la forme que tu veux 🙂 (une navbar à inclure dans base.html.twig avec une boucle twig allant de 1 à 16 par exemple? 😉).
-<!--- {% endraw %} --->
+* après ça, on te demande si cette propriété est nullable, pour nous, on va dire que oui (dans le cas d'un "humain de gouttière", dirons nous);
+
+* on a presque terminé : on te demande si tu veux ajouter une propriété à la classe pour accéder à tous les humains en relation avec un chat donné : cela te donne le choix de rendre la relation *bidirectionelle*, ou de la laisser *unidirectionelle*. Si tu réponds non, tu pourras accéder aux données concernant les chats associé à un humain, mais pas aux données de tous les humains en relation avec un chat donné, car tu n'as pas créé de propriété dans la classe `Cat` te permettant de le faire : on parle de relation *unidirectionelle*. Dans notre cas, bien au contraire, on aimerait pouvoir récupérer la liste des serviteurs d'un chat en particulier : réponds donc "yes" pour créer une relation *bidirectionelle*.
+
+* enfin, on te demande comment tu veux nommer cette nouvelle propriété de la classe `Cat`. Tu pourrais laisser la proposition par défaut "humans", mais pour être plus parlant, et de la même manière que nous avons appelé le champ côté `Human` "masters", appelons celui-ci "servants" 🙃.
+
+Et voilà! Ton entité est créée, allons voir ce qui s'est passé de plus près :
+
+* ton entité `Human` a bien été générée, ainsi que le `HumanRepository` qui va avec;
+
+* les propriétés `masters` et `servants` sont bien présentes, et annotées entre autres avec `inversedBy` pour la propriété `masters`, et `mappedBy` pour la propriété `servants` :
+
+  * `inversedBy` sert à indiquer que la classe dans laquelle elle se trouve est "propriétaire de la relation" entre `Human` et `Cat`. C'est une notion qui peut paraître floue dans un premier temps, mais le principal est de comprendre que lorsque tu vas vouloir faire une modification en base de données, il sera impératif de mettre à jour la propriété annotée par `inversedBy` si tu veux que ta modification soit prise en compte.
+
+  * `mappedBy` sert à désigner "l'autre côté" de la relation : si tu fais des modifications sur cette propriété uniquement, la mise à jour des informations en base de données n'aura pas lieu - cette propriété ne sert "qu'à" rendre la relation *bidirectionelle*.
+
+Maintenant, plus qu'à créer une migration et à la lancer afin de mettre ta base de données à jour 🙂. Répète donc les instructions qu'on a lancées tout à l'heure pour nos chats!
+
+Une fois que c'est fait, va voir dans ton serveur MySQL : tu remarques en faisant un `SHOW TABLES` que Doctrine a créé la table `cat`, mais aussi la table intermédiaire `human_cat` 🤩. En effet, avec Symfony, pas besoin de t'occuper des tables intermédiaires, tout comme les clés étrangères (ou primaires, d'ailleurs 🙃) : c'est Doctrine qui s'occupe de tout! Il suffit de bien lui indiquer le type de relation que tu as besoin de créer lorsque tu lances le *maker bundle*, et tout devrait bien se passer 🙂.
+
 ## CONCLUSION
 
-Voilà qui clos ce premier support sur les bases de Symfony, on se retrouve peut être pour le suivant, dans lequel on va parler bases de données avec Doctrine!
+Voilà qui clos ce second support Symfony sur les bases de Doctrine, on se retrouve peut être pour le suivant, dans lequel on va parler des formulaires Symfony!
