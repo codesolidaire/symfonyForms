@@ -73,14 +73,14 @@ En effet, avant tout chose, il faut créer une base de données avec les informa
 
 * Tu utilises l'utilisateur `root` ou un utilisateur générique ayant tous les droits nécessaires à la création et l'administration d'une base de données : dans ce cas, lance `bin/console doctrine:database:create` (ou `bin/console d:d:c`), et voilà, si tu as bien configuré ton fichier `.env.local`, tu ne devrais pas avoir d'erreur et avoir créé ta base de données 🙂;
 
-* Tu décides de travailler avec un utilisateur spécifique à ton projet, dans ce cas : il faut que tu lances ton serveur de gestion de bases de données, que tu crées ta base et l'utilisateur qui va avec, et que tu lui donne les droits sur cette base à la main - en effet, Doctrine ne prend pas en charge la création/gestion des utilisateurs, mais uniquement celles des bases de données. Tu peux ensuite lancer `bin/console doctrine:database:drop --force` (ou `bin/console d:d:d --force`) - si tu n'as pas d'erreur, c'est que ta database a bien été *supprimée* et donc qu'elle est bien configurée pour Doctrine, et tu peux lancer `bin/console d:d:c` pour la recréer 😉.
+* Tu décides de travailler avec un utilisateur spécifique à ton projet, dans ce cas : il faut que tu lances ton serveur de gestion de bases de données, que tu crées ta base et l'utilisateur qui va avec, et que tu lui donnes les droits sur cette base à la main - en effet, Doctrine ne prend pas en charge la création/gestion des utilisateurs, mais uniquement celles des bases de données. Tu peux ensuite lancer `bin/console doctrine:database:drop --force` (ou `bin/console d:d:d --force`) - si tu n'as pas d'erreur, c'est que ta database a bien été *supprimée* et donc qu'elle est bien configurée pour Doctrine, et tu peux lancer `bin/console d:d:c` pour la recréer 😉.
 
 ### "OK, ET MAINTENANT ON CODE L'ENTITÉ ET LE REPO POUR MES CHATS, C'EST ÇA?"
 
 Disons que nous voulons que nos chats soient représentés par :
 
 * leur nom,
-* une photo (sous la forme d'une url*),
+* une photo (sous la forme d'une url),
 
 et c'est tout.
 
@@ -155,7 +155,7 @@ Une fois que tu as fait ça, vas voir dans ton serveur MySQL : ta base de donné
 
 ### "LES CHIENS ONT DES MAÎTRES, LES CHATS ONT DES SERVITEURS"
 
-Et voilà que tu as créé une première entité! Maintenant, compliquons un peu les choses 🙂. Disons que nous voulons aussi représenter les fidèles serviteurs des chats - les *"humains"* - et leurs relations ("maître" - "serviteur"). Imaginons donc qu'**un chat peut avoir plusieurs serviteurs**,  **un humain peut avoir plusieurs maîtres** (dans le cas d'une "garde partagée").
+Et voilà que tu as créé une première entité! Maintenant, compliquons un peu les choses 🙂. Disons que nous voulons aussi représenter les fidèles serviteurs des chats - les *"humains"* - et leurs relations ("maître" - "serviteur"). Imaginons donc qu'**un chat peut avoir plusieurs serviteurs**, et  **un humain peut avoir plusieurs maîtres** (dans le cas d'une "garde partagée").
 
 Nous allons donc créer une entité `Human` avec quelques propriétés :
 
@@ -164,7 +164,7 @@ Nous allons donc créer une entité `Human` avec quelques propriétés :
 
 et c'est tout.
 
-Pour cela, même démarche que pour la création de notre enntité `Cat` : on met à profit le *maker bundle*. Cependant, quand tu vas créer ta propriété `masters`, que va-t-on indiquer lorsque le *maker bundle* nous demandera le type de la propriété? Et bien tout est prévu : il te suffit d'indiquer le type *"relation"*, et le *maker bundle* te posera un quelques questions et te guidera dans la création de cette propriété 🤩 : 
+Pour cela, même démarche que pour la création de notre entité `Cat` : on met à profit le *maker bundle*. Cependant, quand tu vas créer ta propriété `masters`, que va-t-on indiquer lorsque le *maker bundle* nous demandera le type de la propriété? Et bien tout est prévu : il te suffit d'indiquer le type *"relation"*, et le *maker bundle* te posera quelques questions et te guidera dans la création de cette propriété 🤩 : 
 
 * en premier, il te demande quelle est l'entité avec laquelle cette relation sert de liaison, donc pour nous, `Cat`;
 
