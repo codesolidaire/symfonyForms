@@ -59,7 +59,7 @@ Ainsi que, encore une fois, les getters et setters associés.
 
 Tu peux te dire que ça fait potentiellement beaucoup de code à écrire, mais ne t'inquiète pas, le *binaire Symfony* est là pour t'aider 😉.
 
-## À TOI DE JOUER!
+### À TOI DE JOUER!
 
 Trèves de bavardages, essayons tout ça!
 
