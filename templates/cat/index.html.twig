@@ -1,7 +1,37 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="container text-center d-flex flex-column align-items-center">
-        <h1>Kittens! :3</h1>
-    </div>
+    <h1>Kittens! :3</h1>
+    {% if cats %}
+        <div class="row col-12 justify-content-between">
+            {% for cat in cats %}
+                <div class="col-4">
+                    <div class="card mt-4">
+                        <img src="{{ cat.url }}" class="card-img-top" alt="a cute cat">
+                        <div class="card-body">
+                            <h2 class="card-title">{{ cat.name }}</h2>
+                            {% if cat.servants is defined and cat.servants is not empty %}
+                                {{ cat.name|lower|title }} servants : 
+                                {% for servant in cat.servants %}
+                                    {{ servant.name|lower|title }}{{ loop.index == cat.servants|length ? "." : "," }}
+                                {% endfor %}
+                            {% else %}
+                                {{ cat.name }} has no servants 🙁
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        No cats yet 🙁
+    {% endif %}
+    {% if humans %}
+        List of possible servants : 
+        {% for human in humans %}
+            {{ human.name|lower|title }}{{ loop.index == humans|length ? "." : "," }}
+        {% endfor %}
+    {% else %}
+        No human servants yet...
+    {% endif %}
 {% endblock %}

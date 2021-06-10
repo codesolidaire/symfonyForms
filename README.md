@@ -1,18 +1,18 @@
-# SUPPORT - SYMFONY : DOCTRINE
+# SUPPORT - SYMFONY : FORMS
 
 ## OBJECTIFS
 
-* Apprivoiser les bases de Doctrine;
+* Apprivoiser le concept de formulaire avec Symfony;
 
-* Créer une entité "chat", parce que miaou 🐈;
+* Ajouter des chats en base de données, via un formulaire;
 
-* Créer une entité "humain" parce que les chats ont bien besoin de serviteurs 🙃.
+* Ajouter des humains - fidèles serviteurs des chats - en base de données, via un formulaire.
 
 ## INSTALLATION
 
-Pas de surprises, tu devrais déjà avoir fait ça une paire de fois désormais 🙂.
+Comme d'habitude 🙂 :
 
-* Premièrement, clone ce dépôt : https://github.com/WildCodeSchool/php-support-symfony-doctrine.
+* Premièrement, clone ce dépôt : https://github.com/WildCodeSchool/php-support-symfony-forms.
 
 * Lance `composer install` à la racine du projet.
 
@@ -20,197 +20,198 @@ Pas de surprises, tu devrais déjà avoir fait ça une paire de fois désormais 
 
 * Lance `yarn encore dev` (ou `yarn encore dev --watch`).
 
-* Créé un fichier `.env.local` à partir du fichier `.env` à la racine du projet, et configure-le avec les informations de connexion à ta base de données.
+* Crée un fichier `.env.local` à partir du fichier `.env` à la racine du projet, et configure-le avec les informations de connexion à ta base de données.
 
-## "ENTITY", "REPOSITORY", KÉSAKO?
+## PREMIÈRE CLASSE : L'ENTITÉ
 
-Comme tu as déjà dû t'en rendre compte, avec Symfony, le *modèle* (le **M** de **M**VC) ne ressemble pas à ce que tu as l'habitude de voir. En effet, avec le Simple-MVC, tu étais habitué·e à avoir des classes uniques représentant ton modèle : les *"Manager"*. Cependant, comme Symfony utilise **Doctrine** (un *ORM*), le *modèle* est divisé en deux parties distinctes : les *Entity* et les *Repository*. Revoyons ces quelques notions plus en détail.
+Première particularité : avec Symfony, dans la majorité des cas, le but d'un formulaire va être d'*hydrater une entité*. En effet, comme on travaille en POO, et grâce à Symfony, nous n'allons pas manipuler directement les données contenues dans `$_POST` (ou `$_GET`), et allons préférer manipuler des *objets*.
 
-### "DOCTRINE"? MAIS QU'EST-CE QUE C'EST QUE CES MANIGANCES?
+"Hydrater?!! Mais qu'est-ce que c'est encore que cette histoire?", t'endends-je t'exclamer. Et bien en fait, comme dit juste avant, tu ne vas pas manipuler directement `$_POST`, mais des objets, et pour ce faire, il faut bien que les données récupérées dans `$_POST` soient appliquées à un objet. C'est ce que ton formulaire Symfony va faire, et l'action d'*hydrater* une entité signifie juste : appliquer des modifications aux propriétés d'une entité 🙂.
 
-Doctrine est un *ORM*, pour *Object Relational Mapping*. "Mais qu'est-ce donc qu'un ORM, et pourquoi diable utiliser ce type d'outils?!!", vous entends-je vous exclamer! 😱
+Il nous faut donc une classe qui va représenter les données que nous allons récupérer via notre formulaire.
 
-Et bien en réalité, ce n'est pas si compliqué 🤓 : le concept d'ORM est basé sur le constat simple que la *gestion des bases de données* et la *programmation orientée objet* présentent un certain nombre de similitudes. En effet, dans les deux cas, l'un des buts est de représenter des entités (des choses concrètes ou abstraites), et leurs relations entre elles. Ainsi, on peut faire un certain nombre de parallèles entre ces deux notions, par exemple :
+Ici, le but est dans un premier temps d'ajouter des chats en base de données, nous voulons donc créer une entité Doctrine `Cat`. Pour ce support, nous allons représenter nos chats uniquement grâce à un nom et une photo (une url). À toi de jouer!
 
-* Dans une BDD, une *entité* est représentée par une *table*, quand en POO, elle est représentée par une *classe*;
+> Si tu ne te souviens plus comment créer une entité, va voir [ce support](https://github.com/WildCodeSchool/php-support-symfony-doctrine) 😉.
 
-* Dans une BDD, chaque *représentant* d'une entité est un *tuple* (ou une *ligne*), tandis qu'en POO, on parle d'*instance de classe* ou d'*objet*.
+## DEUXIÈME CLASSE : LE FORMULAIRE
 
-* Dans une BDD, les *caractéristiques* d'une entité sont représentées par des *colonnes*, quand en POO, celles-ci prennent la forme de *propriétés de classe*;
+L'entité, c'est fait, maintenant, au tour du formulaire! "C'est parti pour créer une vue avec nos *labels* et *inputs* alors?"
 
-* Dans une BDD, les *liens* entre les classes se font via des *clés étrangères* et des *tables intermédiaires*, alors qu'en POO, ceux-ci se font via des *propriétés de classe* représentant *une autre entité*;
+Et bien non 🤓. En fait, avec Symfony, tes formulaires seront aussi représentés par des classes. En effet, Symfony fonctionnant en POO, la représentation en classe va permettre le fonctionnement efficace et simplifié d'un certain nombre de choses, comme les validations de formulaires (mais nous verront ça un peu plus tard).
 
-Bref, tu l'as compris, la ressemblance est frappante! Au final, ta base de données va s'occuper de stocker des informations, tandis que la programation orientée objet va te permettre de les manipuler.
+Chacune des *classes de formulaire* va prendre le nom de l'entité avec laquelle elle est liée, suivite du mot clé "Type", et sera rangée dans le dossier `src/Form`, et dans le namespace `App\Form`. Ainsi, pour créer un formulaire d'ajout de chats en base de données, nous allons créer une classe `CatType`. Par chance, le *maker bundle* du *binaire Symfony* est là pour nous aider! 😃
 
-Doctrine est un outil qui va donc faire le parallèle entre ces notions, et va te permettre de te concentrer sur le code et la logique métier. Tu verras, avec Symfony, tu n'auras potentiellement plus du tout besoin d'aller trifouiller directement dans ton serveur MySQL 😉.
+Lance `bin/console make:form` dans un terminal. On te demande d'abord de nommer ta classe de formulaire (donc pour nous, `CatType`, mais si tu indiques juste `Cat`, le *maker bundle* va ajouter le `Type` automatiquement). Ensuite, on te demande avec quelle entité ce formulaire sera lié (donc pour nous, `Cat`).
 
-### UNE "ENTITÉ"? MOI J'APPELLE ÇA UN "TRUC"...
+Une fois que tu as fais ça, observons ce qui s'est passé :
 
-Comme vu plus haut, une entité, c'est au final une "chose" que tu as besoin de représenter - par exemple, un chat. Et dans Symfony en particulier, ce sera un type de classe spécifique, que tu rangeras en toute logique dans le dossier `/src/Entity` 🙃. Cette classe devra contenir au strict minimum les propriétés dont tu as besoin pour représenter ton entité dans la logique métier de ton application, et les getters et setters qui vont avec.
+* Un dossier `Form/` a été crée dans `src/`;
+* Un fichier `CatType.php` a été généré, avec dedans la définition d'une classe `CatType`;
+* Dans cette classe, on observe deux méthodes :
+  * `buildForm()` : comme son nom l'indique, c'est la méthode dans laquelle on va définir comment notre formulaire HTML sera fabriqué (quels champs, quels types d'inputs, quels labels, *etc*...)
+  * `configureOptions()` : comme son nom l'indique ici aussi, c'est ddans cette méthode que l'on va configurer les options 🙃. Très souvent, tu n'auras pas besoin de modifier cette classe, mais c'est entre autres ici qu'est configurée l'entité à laquelle le formulaire est lié.
 
-Dans l'exemple de nos chats, cela veux dire qu'on va avoir une classe `App\Entity\Cat`, avec quelques propriétés de classe, comme :
+## TROISIÈME CLASSE : LE CONTRÔLEUR
 
-* Un identifiant unique
-* Un nom
-* Un lien vers une photo
-* (etc...)
+Ta classe de formulaire est désormais utilisable en soit, mais que va-t-on en faire désormais?
 
-Ainsi que, encore une fois, les getters et setters associés.
+Il va effectivement bien falloir l'utiliser quelque part, et ce quelque part, c'est avant tout un contrôleur. Rends toi donc dans le `CatController`, et crée une méthode :
 
-Tu peux te dire que ça fait potentiellement beaucoup de code à écrire, mais ne t'inquiète pas, le *binaire Symfony* est là pour t'aider 😉.
-
-### À TOI DE JOUER!
-
-Trèves de bavardages, essayons tout ça!
-
-Le projet que tu as récupéré est assez vide, et le but ne vas pas nécessairement être de travailler sur des contrôleurs et des vues, mais de se concentrer sur la création d'entités et la gestions des relations entre celles-ci.
-
-Le but va être dans un premier temps de créer une entitié *"cat"*, relativement simple. Ensuite, nous créérons une seconde entité *"human"*, et nous verrons comment lier nos 2 entités. Nous n'allons pas voir comment ajouter / modifier / supprimer des valeurs en base de données, ce sera le sujet d'un autre groupe de support 😉.
-
-### "HÉ MAIS ATTENDS! J'AI PAS ENCORE CRÉE MA BASE DE DONNÉES!"
-
-En effet, avant tout chose, il faut créer une base de données avec les informations que tu as utilisées dans ton fichier `.env.local`. Pour cela, deux cas se présentent :
-
-* Tu utilises l'utilisateur `root` ou un utilisateur générique ayant tous les droits nécessaires à la création et l'administration d'une base de données : dans ce cas, lance `bin/console doctrine:database:create` (ou `bin/console d:d:c`), et voilà, si tu as bien configuré ton fichier `.env.local`, tu ne devrais pas avoir d'erreur et avoir créé ta base de données 🙂;
-
-* Tu décides de travailler avec un utilisateur spécifique à ton projet, dans ce cas : il faut que tu lances ton serveur de gestion de bases de données, que tu crées ta base et l'utilisateur qui va avec, et que tu lui donnes les droits sur cette base à la main - en effet, Doctrine ne prend pas en charge la création/gestion des utilisateurs, mais uniquement celles des bases de données. Tu peux ensuite lancer `bin/console doctrine:database:drop --force` (ou `bin/console d:d:d --force`) - si tu n'as pas d'erreur, c'est que ta database a bien été *supprimée* et donc qu'elle est bien configurée pour Doctrine, et tu peux lancer `bin/console d:d:c` pour la recréer 😉.
-
-### "OK, ET MAINTENANT ON CODE L'ENTITÉ ET LE REPO POUR MES CHATS, C'EST ÇA?"
-
-Disons que nous voulons que nos chats soient représentés par :
-
-* leur nom,
-* une photo (sous la forme d'une url),
-
-et c'est tout.
-
-On pourrait se dire qu'il faut commencer par créer une classe Cat, qu'on lui ajoute les propriétés qui vont bien, les getters et setters, etc... Et bien non! Enfin, si, mais pas à la main, car rappelle-toi : ***le binaire Symfony est ton ami*** 😉.
-
-En effet, le *maker bundle* de Symfony possède une commande `bin/console make:entity` justement pour faire tout ça 🤩. 
-
-Essaie de la lancer, et suis les différentes étapes :
-
-* on commence par te demander le nom que tu veux donner à ton entité - en toute logique, réponds "Cat" 🙃;
-
-* ensuite, on te demande d'ajouter des propriétés, et d'appuyer sur entrée lorsque tu as terminé
-  * à chaque fois, commence par indiquer le nom de la propriété (donc *"name"* pour la première, et *"url"* ou *"image"* pour la seconde),
-  * après le nom, on te demande ensuite d'indiquer le type de la propriété (donc *"string"* dans les deux cas pour nous),
-  * et enfin, on te demande de préciser si cette propriété peut être nulle en base de données (donc non dans les deux cas, pour nous).
-
-Et voilà! Tu peux appuyer sur *Entrée* quand tu as terminé de configurer ces deux propriétés, et aller voir tout ce qui a été fait pour toi!
-
-Tu peux donc remarquer que :
-
-* ton entité *Cat* a été créée, avec toutes les propriétés que tu as indiquées et les getters et setters qui vont bien (ainsi que les `use` et la déclaration du `namespace`);
-
-* ton *Entity* possède aussi une propriété `$id`, que tu n'as pas eu besoin de préciser au *maker bundle* (et le getter et setter qui vont avec);
-
-* ton *Entity* et chacune de ses propriétés possèdent une annotation `@ORM` permettant à *Doctrine* de savoir comment les gérer;
-
-* le *Repository* associé à ton entité *Cat* - le *CatRepository* - a aussi été généré automatiquement;
-
-* le *maker bundle* t'indique la marche à suivre pour la suite :
-  
-```shell
-Next: When you're ready, create a migration with php bin/console make:migration
+```php
+/**
+ * @Route("/add", name="add")
+ */
+public function add(Request $request): Response
 ```
 
-Bref, tout ça en répondant vite fait à quelques questions en lignes de commande, c'est quand même bien cool! 🤩
+"`Request $request`???" : et oui, avec Symfony, les informations envoyées via `$_POST` (entre autres), se trouvent dans un objet particulier de la classe `Symfony\Component\HttpFoundation\Request`. Tu en as donc besoin dans cette méthode, et pour l'utiliser, il suffit de l'*injecter* en paramètre de ta méthode 🙂. Attention, il ne faut pas que tu oublies d'ajouter le `use` qui va avec 😉.
 
-### DES "REPOSITORY"? MAIS QUE VIENT FAIRE GITHUB DANS TOUT ÇA?
+Ensuite, nous avons besoin de 2 choses :
 
-Ici, rien à voir avec les *repo GitHub*. En fait, les *Repository* ressemblent aux *Manager* du Simple-MVC. En effet, les *Entity* définissent la *forme* des choses que tu veux représenter, mais tu remarques que nulle part nous n'avons défini de méthodes permettant *d'interagir* avec ces entités en base de données (c'est à dire faire des requêtes de type *"INSERT INTO"* ou *"SELECT"*, par exemple) 🤔.
+* Un formulaire `CatType`
+* Un objet `Cat`, que notre formulaire va hydrater
 
-Et bien c'est justement le but des *Repository* en Symfony. Et comme avec le Simple-MVC, ces *Repository* possèdent un certain nombre de méthodes "prédéfinies", mais de façon beaucoup plus puissante que dans le Simple-MVC (en réalité, elles sont *fabriquées à la volée* 😉).
+Ajoute donc les 3 lignes suivantes dans le corps de ta méthode `add()` :
 
-Dans la majorité des cas (mais pas dans *tous* les cas ❗), tu laisseras donc Symfony s'occuper de générer ces classes-ci automatiquement (comme ici dans notre cas, à l'étape précédente 😉), et tu n'auras pas souvent besoin d'aller les modifier "à la main" 🙂.
-
-### ET DES "MIGRATIONS"? C'EST UNE HISTOIRE D'OISEAUX ÇA, NON?
-
-"Ok, jusque là, ça va, mais qu'en est-il des tables dans ma base de données? Et pourquoi le binaire Symfony me dit de migrer après avoir crée mon entité? Et migrer où???"
-
-Pas de panique, là encore, le *binaire Symfony* est là pour t'aider! 🙂 En effet, tu n'auras pas besoin de t'occuper toi même de tes tables dans ta base de données. À chaque fois que tu vas ajouter ou faire une modification sur une entité (donc dans une *classe suivie par Doctrine* du namespace `App\Entity` dans le dossier `/src/Entity`), tu vas pouvoir créer une *migration*. Une *migration* est un type de classe Symfony contenant des requêtes d'administration de base de données (en gros, des *"CREATE TABLE"*, *"ALTER TABLE"*, etc...).
-
-Ensuite, une fois que tu as créé une migration, il te suffit de la lancer pour appliquer les modifications à ta base de données 🙂.
-
-Tu pourrais très bien faire tout ça toi même à la main, mais ici aussi, le *binaire Symfony* est ton ami 😉. En plus, il se charge même de créer les clés étrangères et les tables intermédiaires quand tu as besoin de créer des relations entre tes entités! 🤩
-
-Aussi, ce principe de migrations permet à toutes les personnes qui récupèrent un projet Symfony de récupérer aussi la structure de base de données qui va avec : il leur suffit juste de lancer toutes les migrations dans l'ordre au moment d'installer le projet, et hop, elles ont une base de donnée dans son état le plus récent!
-
-### "OK, DU COUP MAINTENANT ON MIGRE, C'EST CHAT?"
-
-Yup! Revenons à nos chats. Maintenant qu'on a fait le côté POO, il faut s'occuper du côté BDD. En effet, si tu vas voir dans ton serveur MySQL, tu remarqueras que pour l'instant, il ne s'est rien passé dans ta base de données.
-
-Pour que les modifications de ton *modèle* soient prises en compte côté BDD, il faut dans un premier temps créer une migration. Ici encore, le *maker bundle* est là pour toi 🥰.
-
-Lance `bin/console make:migration`. Un fichier de migration a été créé dans le dossier `/migrations` (sans surprise 🙃). Dans ce fichier, tu trouveras une classe de migration contenant principalement une méthode `up()` et une méthode `down()` :
-
-* La première sert à appliquer les modifications permettant de mettre à jour la base de données par rapport à son état précédent (donc ici, elle crée la table "cat" avec toutes les caractéristiques demandées, puisqu'elle n'existait pas encore);
-
-* La seconde sert à faire revenir la base de données dans l'état dans lequel elle était avant la création de la migration (donc ici, elle détruit la table "cat").
-
-Maintenant, plus qu'à appliquer cette migration en lançant `bin/console doctrine:migrations:migrate` (ou `bin/console do:mi:mi` pour les musicien·ne·s 🎵).
-
-Une fois que tu as fait ça, vas voir dans ton serveur MySQL : ta base de données a bien été mise à jour avec la table `cat`, ainsi qu'une table auto-générée `doctrine_migration_versions`. En effet, cette table permet à Doctrine de savoir où il en est au niveau des migrations : lorsque tu lances `bin/console do:mi:mi`, Doctrine va commencer par aller vérifier s'il y a des migrations dans ton dossier `/migrations` qu'il ne trouve pas dans la table `doctrine_migration_versions`, et va simplement reprendre là où il s'était arrêté 🙂.
-
-### "LES CHIENS ONT DES MAÎTRES, LES CHATS ONT DES SERVITEURS"
-
-Et voilà que tu as créé une première entité! Maintenant, compliquons un peu les choses 🙂. Disons que nous voulons aussi représenter les fidèles serviteurs des chats - les *"humains"* - et leurs relations ("maître" - "serviteur"). Imaginons donc qu'**un chat peut avoir plusieurs serviteurs**, et  **un humain peut avoir plusieurs maîtres** (dans le cas d'une "garde partagée").
-
-Nous allons donc créer une entité `Human` avec quelques propriétés :
-
-* name
-* masters
-
-et c'est tout.
-
-Pour cela, même démarche que pour la création de notre entité `Cat` : on met à profit le *maker bundle*. Cependant, quand tu vas créer ta propriété `masters`, que va-t-on indiquer lorsque le *maker bundle* nous demandera le type de la propriété? Et bien tout est prévu : il te suffit d'indiquer le type *"relation"*, et le *maker bundle* te posera quelques questions et te guidera dans la création de cette propriété 🤩 : 
-
-* en premier, il te demande quelle est l'entité avec laquelle cette relation sert de liaison, donc pour nous, `Cat`;
-
-* ensuite, il te propose de choisir parmi tous les types de relations dont tu pourrais avoir besoin, avec même des indications sur ce qu'elles signifient 🤩 :
-
-```shell
-What type of relationship is this?
------------- ---------------------------------------------------------------- 
-  Type         Description                                                     
------------- ---------------------------------------------------------------- 
- ManyToOne    Each Human relates to (has) one Cat.                            
-              Each Cat can relate to (can have) many Human objects            
-                                                                               
- OneToMany    Each Human can relate to (can have) many Cat objects.           
-              Each Cat relates to (has) one Human                             
-                                                                               
- ManyToMany   Each Human can relate to (can have) many Cat objects.           
-              Each Cat can also relate to (can also have) many Human objects  
-                                                                               
- OneToOne     Each Human relates to (has) exactly one Cat.                    
-              Each Cat also relates to (has) exactly one Human.               
------------- ----------------------------------------------------------------
+```php
+$cat = new Cat();
+$form = $this->createForm(CatType::class, $cat);
+$form->handleRequest($request);
 ```
 
-Ici, on a dit que chaque humain peut être lié à plusiquers chats, et chaque chat peut avoir plusieurs humains : on a donc une relation de type *ManyToMany*.
+Ici, on instancie un nouveau `Cat`, puis on crée un nouveau formulaire `CatType` avec la méthode `createForm()`, en précisant en second paramètre que l'on veut que notre formulaire *hydrate* l'objet `$cat` qu'on a crée juste avant. La troisième ligne quand à elle permet d'automatiser les étapes d'*hydratation* de ton objet `$cat` par ton formulaire `$form`.
 
-* après ça, on te demande si cette propriété est nullable, pour nous, on va dire que oui (dans le cas d'un "humain de gouttière", dirons nous);
+> Note : il ne faut pas oublier d'ajouter les `use` qui vont avec `Cat` et `CatType` ❗
 
-* on a presque terminé : on te demande si tu veux ajouter une propriété à la classe pour accéder à tous les humains en relation avec un chat donné : cela te donne le choix de rendre la relation *bidirectionelle*, ou de la laisser *unidirectionelle*. Si tu réponds non, tu pourras accéder aux données concernant les chats associé à un humain, mais pas aux données de tous les humains en relation avec un chat donné, car tu n'as pas créé de propriété dans la classe `Cat` te permettant de le faire : on parle de relation *unidirectionelle*. Dans notre cas, bien au contraire, on aimerait pouvoir récupérer la liste des serviteurs d'un chat en particulier : réponds donc "yes" pour créer une relation *bidirectionelle*.
+Grâce à ces trois lignes, les informations que l'utilisateur renseignera dans le formulaire se retrouveront automatiquement en valeurs des propriétés de ton `$cat` - tu pourras donc retrouver ces informations en utilisant les *getters* de ton objet `$cat` (exemple : `$cat->getName()` renverra le nom renseigné dans le formulaire par l'utilisateur 🙂).
 
-* enfin, on te demande comment tu veux nommer cette nouvelle propriété de la classe `Cat`. Tu pourrais laisser la proposition par défaut "humans", mais pour être plus parlant, et de la même manière que nous avons appelé le champ côté `Human` "masters", appelons celui-ci "servants" 🙃.
+## LA VUE
 
-Et voilà! Ton entité est créée, allons voir ce qui s'est passé de plus près :
+Maintenant, il faut bien qu'on affiche notre formulaire quelque part. Ajoute le code qui permet à ta méthode `add()` de retourner une vue `cat/add.html.twig`, et crée un fichier `add.html.twig` dans ton dossier `templates/cat/`, et pense bien à faire hériter ta vue de `base.html.twig`.
 
-* ton entité `Human` a bien été générée, ainsi que le `HumanRepository` qui va avec;
+Cependant, comme dit plus tôt, on ne va pas écrire notre formulaire HTML en dur dans notre vue. Comme nous avons une classe qui représente notre formulaire (`CatType`), nous allons donc préférer laisser Symfony se débrouiller pour créer notre formulaire HTML en se basant sur cette classe.
 
-* les propriétés `masters` et `servants` sont bien présentes, et annotées entre autres avec `inversedBy` pour la propriété `masters`, et `mappedBy` pour la propriété `servants` :
+Modifie le `render()` de ta méthode `add()` pour qu'il ressemble à ceci :
 
-  * `inversedBy` sert à indiquer que la classe dans laquelle elle se trouve est "propriétaire de la relation" entre `Human` et `Cat`. C'est une notion qui peut paraître floue dans un premier temps, mais le principal est de comprendre que lorsque tu vas vouloir faire une modification en base de données, il sera impératif de mettre à jour la propriété annotée par `inversedBy` si tu veux que ta modification soit prise en compte.
+```php
+return $this->render('cat/add.html.twig', [
+    'form' => $form->createView(),
+    'cat' => $cat,
+]);
+```
+<!--- {% raw %} --->
+Ici, la méthode `createView()` va créer un objet manipulable par Twig à partir de ce qu'on trouve dans la classe `CatType`. On crée donc notre formulaire dans le contrôleur, et on l'envoie dans notre vue 🤓.
 
-  * `mappedBy` sert à désigner "l'autre côté" de la relation : si tu fais des modifications sur cette propriété uniquement, la mise à jour des informations en base de données n'aura pas lieu - cette propriété ne sert "qu'à" rendre la relation *bidirectionelle*.
+En plus de notre formulaire HTML, nous envoyons aussi notre objet `$cat`, afin que les informations soumises via le formulaire soient réutilisables dans la vue (principalement pour ne pas vider le formulaire à chaque fois que l'utilisateur soumet des informations invalides).
 
-Maintenant, plus qu'à créer une migration et à la lancer afin de mettre ta base de données à jour 🙂. Répète donc les instructions qu'on a lancées tout à l'heure pour nos chats!
+Comme on envoie notre formulaire dans notre vue sous la forme d'une *variable Twig*, il va bien falloir que nous allions modifier certaines choses dans la vue `cat/add.html.twig`. Dans le `{% block body %}`, ajoute le code suivant :
 
-Une fois que c'est fait, va voir dans ton serveur MySQL : tu remarques en faisant un `SHOW TABLES` que Doctrine a créé la table `cat`, mais aussi la table intermédiaire `human_cat` 🤩. En effet, avec Symfony, pas besoin de t'occuper des tables intermédiaires, tout comme les clés étrangères (ou primaires, d'ailleurs 🙃) : c'est Doctrine qui s'occupe de tout! Il suffit de bien lui indiquer le type de relation que tu as besoin de créer lorsque tu lances le *maker bundle*, et tout devrait bien se passer 🙂.
+```twig
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+{{ form_end(form) }}
+```
+
+`form_start()` et `form_end()` sont des *fonctions twig* qui vont permettre de générer les balises ouvrante et fermante de ton formulaire, tandis que `form_widget()` va permettre d'afficher le contenu (inputs, labels, erreurs, *etc*...) de ton formulaire.
+
+Allume ton serveur Symfony et rends toi dans ton navigateur à la route `/add`, tu devrais voir les champs de ton formulaire, avec en label les noms des propriétés de ta classe `Cat`. Cependant, il manque une chose! En effet, il manque un bouton 🤔. C'est la seule partie de ton formulaire qu'il faut que tu écrives en dur dans ta vue, juste avant la ligne `{{ form_end(form) }}`. Une fois que tu as ajouté ton bouton, tu devrais le voir apparaître.
+<!--- {% endraw %} --->
+
+Voilà, tu peux essayer de soumettre un formulaire, pour l'instant, il ne se passe rien, mais tu remarques que ton formulaire garde bien les informations que tu as soumises en mémoire (ton formulaire ne se vide pas entre chaque soumission), puisque tu envoies bien ta variable `$cat` - qui contient les informations du formulaire - dans ta vue 🙂.
+
+## PERSONNALISER LE FORMULAIRE
+
+Tu aimerais cependant afficher des *labels* différents de ceux utilisés par défaut pour les champs de ton formulaire : pour cela, plusieurs solutions, mais nous allons explorer l'idée de modifier ces informations dans notre classe de contrôleur `CatType`.
+
+En allant voir ce qui s'y passe, tu peux remarquer que dans ta méthode `buildForm()`, tu retrouve un appel à la méthode `add()` appliquée à un objet `$builder` par champ de ton formulaire. C'est ici que tu vas personnaliser tes labels 🙂. Seulement attention, le second paramètre de cette méthode `add()` doit toujours être le nom d'une classe qui représente un *type d'input* particulier. Tu remarques que tes deux champs de formulaires générés dans ton site sont automatiquement des `input type="text"`, mais tu pourrais préciser le type de champ que tu veux en second paramètre de ta méthode `add()`. Exemple : pour trahnsformer ton champ `name` en `textarea`, tu peux modifier le `add()` associé à ce champ en : `add('name', TextareaType::class)` (n'oublie pas le `use Symfony\Component\Form\Extension\Core\Type\TextareaType;` qui va avec ❗). Recharge ta page, ton champ `name` devrait être devenu unn textarea 🙂.
+
+Bon, après, ce n'est pas très logique 🙃, donc pour que tes deux champs soient bien des `input type="text"`, précise plutôt `TextType::class` pour tes deux champs (toujours sans oublier le `use` qui va avec).
+
+Maintenant que tu as fait ça, tu vas pouvoir ajouter un troisième paramètre à tes méthodes `add()`, sous la forme d'un tableau associatif, dans lequel tu vas ajouter tes options.
+
+Pour personnaliser les labels, il te suffit donc de modifier tes deux méthodes de la manière suivante :
+
+```php
+->add('name', TextType::class, [
+    'label' => 'The label you want'
+])
+```
+
+Et voilà! 🤓
+
+> Note : pour plus d'informations sur les types de champs et les options, voir [la doc](https://symfony.com/doc/5.2/forms.html) 🙃
+
+## TRAITEMENT DU FORMULAIRE
+
+Alors par contre, pour l'instant, il ne se passe rien quand on soumet notre formulaire 🤔.
+
+Ce qu'on veut, c'est ajouter un chat en base de données si jamais notre formulaire est bien soumis, et rediriger vers une page qui liste nos chats. Pour ça, rien de plus simple avec Symfony :
+
+* Tu auras besoin de l'*Entity Manager* pour ajouter des informations en base de données, injecte-le donc en paramètre de ta méthode de contrôleur (`EntityManagerInterface $entityManager`, sans oublier le `use Doctrine\ORM\EntityManagerInterface` ❗)
+* Ajoute le code suivant à ton contrôleur, avant ton return :
+```php
+if ($form->isSubmitted() && $form->isValid()) {
+    $entityManager->persist($cat);
+    $entityManager->flush();
+
+    return $this->redirectToRoute('cat_index');
+}
+```
+
+Ici, `$form->isSubmitted() && $form->isValid()` vérifie si le formulaire a été soumis et valide (nous verrons les validations un peu plus loin).
+
+Ensuite, `$entityManager->persist($cat);` va indiquer à l'Entity Manager de suivre l'objet `$cat`, `$entityManager->flush();` va appliquer les modifications en base de données, et `return $this->redirectToRoute('cat_index');` va servir à rediriger vers la page qui affiche la liste des chats (qui, ici, est déjà préparée).
+
+> Profite de cette occasion pour décommenter le code commenté en rapport avec les chats (pas encore celui en rapport avec les humains ❗) dans la méthode `index()` de ton contrôleur.
+
+Essaie à nouveau de soumettre ton formulaire en indiquant une url du type `https://placekitten.com/200/300?image={id}` où `{id}` est un nombre quelconque entre 0 et 16 : tu devrais retrouver un chat à la route `/` à laquelle tu devrais être redirigé·e 🐈.
+
+## FORMULAIRES AVEC RELATION
+
+On a déjà un formulaire sympa qui marche, mais on aimerais ajouter des serviteurs à nos chats. pour cela, il nous faut déjà une entité, qu'on va appeler `Human`, qui va avoir juste une propriété `name`. À toi de le faire!
+
+On va ensuite ajouter une relation `ManyToMany` unidirectionnelle entre nos deux entités, avec le côté `Cat` en côté *propriétaire*. Notre relation sera donc représentée par une propriété `servants` de la classe `Cat`. Une fois tes entités créees / modifiées, n'oublie pas de créer et de lancer une migration ❗
+
+Suis les étapes précédentes pour créer un formulaire d'ajout d'humains, sans penser à la relation pour l'instant : le but va être d'ajouter des serviteurs à nos chats, pas dans l'autre sens.
+
+Après avoir ajouté quelques humains, quand tu vas créer des nouveaux chats, tu vas désormais vouloir préciser quels seront ses serviteurs : il va falloir ajouter un champ à notre formulaire d'ajout de chat 🐱. Étant donné que ce champ va représenter une autre entité, on va devoir le déclarer de façon un peu particulière... Ajoute le code suivant dans `CatType` :
+```php
+->add('servants', EntityType::class, [
+    'label' => 'The cat\'s servants : ',
+    'class' => Human::class,
+    'choice_label' => 'name',
+    'multiple' => true,
+    'expanded' => true,
+])
+```
+
+Ici, tu observes plusieurs options que l'on doit préciser :
+
+* `class` (propre aux `EntityType`) sert à préciser avec quelle classe ce champ est lié
+* `choice_label` (propre aux `EntityType`) sert à indiquer quelle propriété de la classe on devrait utiliser pour représenter les objets de la classe définie au-dessus
+* `multiple` (utilisable aussi dans les `ChoiceType`) sert à déterminer si l'on veut autoriser les choix multiples
+* `expanded` (utilisable aussi dans les `ChoiceType`) sert à déterminer si l'on veut une liste déroulante ou des boîtes à cocher
+
+Ainsi, nous déterminons ici que ce champ représentera des `Human`, que ces `Human` seront représentés par le *nom*, et que notre input prendra la forme de *checkboxes*.
+
+Essaie d'aller ajouter un nouveau chat : tu devrais désormais pouvoir cocher ces serviteurs 🐱.
+
+## LES VALIDATIONS
+
+C'est bien beau tout ça, mais rien ne m'empêche de rentrer "bibi" dans le champ "url" lorsque j'ajoute un chat, par exemple.
+
+Et oui, il nous manque une dernière étape : les validations! Et avec Symfony, c'est simple, plus besoin de faire plein de "if" dans notre contrôleur ou de créer des méthodes ou classes de validations : tout est prévu grâce aux annotations 🤩.
+
+Et comme tes formulaires sont liés à des entités, c'est directement ces entités que tu vas annoter 🤓. Commence par ajouter `use Symfony\Component\Validator\Constraints as Assert;` dans tes deux fichiers d'entités, et tu pourras ensuite ajouter des annotations `@Assert\UneValidation()` au dessus de chacune des tes propriétés de classe 🤩. Il existe tout un tas de validations prévues par Symfony, mais celles qui nous intéressent ici sont :
+* `@Assert\NotBlank()` qui permet de valider qu'une propriété n'est pas vide (c'est l'équivalent de ce que tu faisait avec `empty()` quand tu écrivait tes validations toi même)
+* `@Assert\Length(max=255)` va nous permettre de valider la longueur maximum d'un champ (avant Symfony, tu utilisais sûrement `strlen`)
+* `@Assert\Url()` va nous permettre de valider le format d'une url (équivaut à `filter_var($maVariable, FILTER_VALIDATE_URL)`)
+
+Tu te rappelles peut être ce que l'on a fait tout à l'heure dans notre contrôleur, lorsque l'on a ajouté `$form->isSubmitted() && $form->isValid()`? Et bien la méthode `isValid()` va justement se servir des annotations que tu ajoutes pour lancer automatiquement les validations de ton formulaire.
+
+Voilà! C'est tout de suite bien plus facile, non? 🤓
 
 ## CONCLUSION
 
-Voilà qui clos ce second support Symfony sur les bases de Doctrine, on se retrouve peut être pour le suivant, dans lequel on va parler des formulaires Symfony!
+Voilà qui clos ce troisième support Symfony sur les formulaires!
