@@ -20,6 +20,8 @@ Comme d'habitude 🙂 :
 
 * Crée un fichier `.env.local` à partir du fichier `.env` à la racine du projet, et configure-le avec les informations de connexion à ta base de données.
 
+Habitue-toi à utiliser la documentation de Symfony. Une grande partie de ce que tu vas réaliser dans cet atelier est documenté ici [Forms (Symfony Docs)](https://symfony.com/doc/current/forms.html)
+
 ## PREMIÈRE CLASSE : L'ENTITÉ
 
 Première particularité : avec Symfony, dans la majorité des cas, le but d'un formulaire va être d'*hydrater une entité*. En effet, comme on travaille en POO, et grâce à Symfony, nous n'allons pas manipuler directement les données contenues dans `$_POST` (ou `$_GET`), et allons préférer manipuler des *objets*.
@@ -52,7 +54,7 @@ Une fois que tu as fait ça, observons ce qui s'est passé :
 
 ## TROISIÈME CLASSE : LE CONTRÔLEUR
 
-Ta classe de formulaire est désormais utilisable en soit, mais que va-t-on en faire désormais?
+Ta classe de formulaire est désormais utilisable en soit, mais que va-t-on en faire désormais ?
 
 Il va effectivement bien falloir l'utiliser quelque part, et ce quelque part, c'est avant tout un contrôleur. Rends toi donc dans le `CatController`, et crée une méthode :
 
@@ -63,7 +65,7 @@ Il va effectivement bien falloir l'utiliser quelque part, et ce quelque part, c'
 public function add(Request $request): Response
 ```
 
-"`Request $request`???" : et oui, avec Symfony, les informations envoyées via `$_POST` (entre autres), se trouvent dans un objet particulier de la classe `Symfony\Component\HttpFoundation\Request`. Tu en as donc besoin dans cette méthode, et pour l'utiliser, il suffit de l'*injecter* en paramètre de ta méthode 🙂. Attention, il ne faut pas que tu oublies d'ajouter le `use` qui va avec 😉.
+"`Request $request`???" : et oui, avec Symfony, les informations envoyées via `$_POST` (entre autres), se trouvent dans un objet particulier de la classe `Symfony\Component\HttpFoundation\Request`. Tu en as donc besoin dans cette méthode, et pour l'utiliser, il suffit de l'*injecter* en paramètre de ta méthode 🙂. Attention, il ne faut pas que tu oublies d'ajouter le `use` qui va avec 😉 (Si tu te fais aider par ton ide, fais bien attention à bien choisir la bonne classe Request).
 
 Ensuite, nous avons besoin de 2 choses :
 
@@ -111,6 +113,9 @@ Comme on envoie notre formulaire dans notre vue sous la forme d'une *variable Tw
 `form_start()` et `form_end()` sont des *fonctions twig* qui vont permettre de générer les balises ouvrante et fermante de ton formulaire, tandis que `form_widget()` va permettre d'afficher le contenu (inputs, labels, erreurs, *etc*...) de ton formulaire.
 
 Allume ton serveur Symfony et rends toi dans ton navigateur à la route `/add`, tu devrais voir les champs de ton formulaire, avec en label les noms des propriétés de ta classe `Cat`. Cependant, il manque une chose! En effet, il manque un bouton 🤔. C'est la seule partie de ton formulaire qu'il faut que tu écrives en dur dans ta vue, juste avant la ligne `{{ form_end(form) }}`. Une fois que tu as ajouté ton bouton, tu devrais le voir apparaître.
+
+C'est une [bonne pratique de Symfony](https://symfony.com/doc/current/best_practices.html#add-form-buttons-in-templates) d'ajouter le bouton dans la vue, afin de pouvoir réutiliser la classe de formulaire dans des contextes différents (création / édition par exemple)
+
 <!--- {% endraw %} --->
 
 Voilà, tu peux essayer de soumettre un formulaire, mais pour l'instant, il ne se passe rien 🙃. Nous verrons comment traiter notre formulaire dans quelques instants 🙂.
@@ -135,7 +140,7 @@ Pour personnaliser les labels, il te suffit donc de modifier tes deux méthodes 
 
 Et voilà! 🤓
 
-> Note : pour plus d'informations sur les types de champs et les options, voir [la doc](https://symfony.com/doc/5.2/forms.html) 🙃
+> Note : pour plus d'informations sur les types de champs et les options, voir [la doc](https://symfony.com/doc/current/forms.html) 🙃
 
 ## TRAITEMENT DU FORMULAIRE
 
